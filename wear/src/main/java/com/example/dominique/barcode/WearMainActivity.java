@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
+    private static final String TAG = "TAG";
 
     private BoxInsetLayout mContainerView;
     private TextView mTextView;
@@ -61,6 +63,7 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     @Override
     public void onEnterAmbient(Bundle ambientDetails) {
         super.onEnterAmbient(ambientDetails);
+        sensorManager.unregisterListener(this, accelerometer);
         updateDisplay();
     }
 
@@ -73,6 +76,7 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     @Override
     public void onExitAmbient() {
         updateDisplay();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         super.onExitAmbient();
     }
 
@@ -81,7 +85,6 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
             mContainerView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.black));
             mTextView.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
             //mClockView.setVisibility(View.VISIBLE);
-
             //mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
         } else {
             mContainerView.setBackground(null);
@@ -92,7 +95,14 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            // Code for sampling data comes here
+            float x_acc = event.values[0];
+            float y_acc = event.values[1];
+            float z_acc = event.values[2];
+            // Write values to console
+            Log.e(TAG, "x: "+x_acc+" y: "+y_acc+" z: "+z_acc);
+        }
     }
 
     @Override
