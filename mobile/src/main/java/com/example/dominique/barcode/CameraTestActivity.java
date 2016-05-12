@@ -27,6 +27,10 @@ import android.hardware.Camera.Size;
 import android.widget.TextView;
 import android.graphics.ImageFormat;
 
+// Testing
+import android.content.pm.PackageManager;
+import android.widget.Toast;
+
 /* Import ZBar Class files */
 import com.example.dominique.barcode.R;
 
