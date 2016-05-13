@@ -12,6 +12,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/glass" />
             <option value="$PROJECT_DIR$/mobile" />
+            <option value="$PROJECT_DIR$/myapplication" />
+            <option value="$PROJECT_DIR$/myapplicationwear" />
             <option value="$PROJECT_DIR$/wear" />
           </set>
         </option>
@@ -20,6 +22,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/glass" />
             <option value="$PROJECT_DIR$/mobile" />
+            <option value="$PROJECT_DIR$/myapplication" />
+            <option value="$PROJECT_DIR$/myapplicationwear" />
             <option value="$PROJECT_DIR$/wear" />
           </set>
         </option>

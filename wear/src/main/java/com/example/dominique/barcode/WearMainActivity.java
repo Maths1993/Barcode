@@ -1,24 +1,19 @@
 package com.example.dominique.barcode;
 
-import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
-import android.support.wearable.view.BoxInsetLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class WearMainActivity extends WearableActivity implements SensorEventListener {
@@ -26,6 +21,14 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
     private static final String TAG = "TAG";
+
+    public static final int OK = 0;
+    public static final int CONNECTION_FAIL = 1;
+    public static final int NO_TARGETS = 2;
+    public static final int ALL_RECEIVED  = 3;
+    public static final int NOT_ALL_RECEIVED = 4;
+    public static final int CONNECTION_SUSPEND = 5;
+    public final int requestCode = 0;
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -65,9 +68,51 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
             float x_acc = event.values[0];
             float y_acc = event.values[1];
             float z_acc = event.values[2];
+
             // Write values to console
             Log.e(TAG, "x: "+x_acc+" y: "+y_acc+" z: "+z_acc);
+
+            if(gestureRecognized()) {
+                sensorManager.unregisterListener(this, accelerometer);
+                sendToPhone();
+            }
         }
+    }
+
+    public boolean gestureRecognized() {
+        // TODO: Code for gesture recognition
+        button.setText("START GESTURE RECOGNITION");
+        return true;
+    }
+
+    public void sendToPhone() {
+        Intent requestIntent = new Intent(this, SendToPhone.class);
+        startActivityForResult(requestIntent, requestCode);
+    }
+
+    @Override
+    public void onActivityResult(int receivedCode, int resultCode, Intent data) {
+        if(receivedCode == requestCode) {Log.w(TAG, Integer.toString(resultCode));
+            if(resultCode == OK) {
+                // When smartphone got informed about gesture recognition
+            }
+            if(resultCode == CONNECTION_FAIL) {
+                // When connection failure to smart phone
+            }
+            if(resultCode == CONNECTION_SUSPEND) {
+
+            }
+            if(resultCode == NO_TARGETS) {
+
+            }
+            if(resultCode == ALL_RECEIVED) {
+
+            }
+            if(resultCode == NOT_ALL_RECEIVED) {
+
+            }
+        }
+        Log.d(TAG, "salle");
     }
 
     @Override
@@ -104,7 +149,9 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     @Override
     public void onPause() {
         super.onPause();
-        // Log.w(TAG, pause);
-        System.exit(0);
+        if(active) {
+            sensorManager.unregisterListener(this, accelerometer);
+            active = false;
+        }
     }
 }
