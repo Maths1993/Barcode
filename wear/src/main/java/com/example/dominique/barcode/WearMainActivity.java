@@ -40,29 +40,22 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
         setAmbientEnabled();
 
         button = (Button) findViewById(R.id.button_gesture);
+        //Log.w(TAG, "create");
     }
 
     @Override
     public void onEnterAmbient(Bundle ambientDetails) {
         super.onEnterAmbient(ambientDetails);
-        updateDisplay();
-        Log.w(TAG, "enterAmb");
     }
 
     @Override
     public void onUpdateAmbient() {
         super.onUpdateAmbient();
-        updateDisplay();
     }
 
     @Override
     public void onExitAmbient() {
-        updateDisplay();
         super.onExitAmbient();
-    }
-
-    private void updateDisplay() {
-
     }
 
     @Override
@@ -111,12 +104,7 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     @Override
     public void onPause() {
         super.onPause();
-        Log.w(TAG, "pause");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.w(TAG, "resume");
+        // Log.w(TAG, pause);
+        System.exit(0);
     }
 }
