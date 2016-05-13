@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
@@ -7,4 +9,11 @@
     tools:context="com.example.dominique.barcode.WearMainActivity"
     tools:deviceIds="wear">
 
-</android.support.wearable.view.BoxInsetLayout>
+    <Button
+        android:id="@+id/button_gesture"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/gestureStart"
+        android:onClick="handleAccelerometer" />
+
+</LinearLayout>
