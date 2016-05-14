@@ -16,15 +16,27 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application android:label="@string/app_name">
+
         <activity
-            android:name=".CameraTestActivity"
+            android:name=".MainActivity">
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
         </activity>
+
+        <service android:name=".ReceiveFromWatch">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data android:scheme="wear" android:host="*"
+                    android:path="/path" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

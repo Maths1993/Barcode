@@ -36,6 +36,8 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     private Button button;
     private boolean active = false;
 
+    private long actualTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,16 +65,19 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        long oldTime = 0;
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             // Code for sampling data comes here
             float x_acc = event.values[0];
             float y_acc = event.values[1];
             float z_acc = event.values[2];
+            long actualTime = event.timestamp/1000000;
 
             // Write values to console
-            Log.e(TAG, "x: "+x_acc+" y: "+y_acc+" z: "+z_acc);
+            Log.e(TAG, "x: "+x_acc+" y: "+y_acc+" z: "+z_acc+" time: "+ (actualTime));
 
             if(gestureRecognized()) {
+                button.setText("START GESTURE RECOGNITION");
                 sensorManager.unregisterListener(this, accelerometer);
                 sendToPhone();
             }
@@ -81,7 +86,6 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
 
     public boolean gestureRecognized() {
         // TODO: Code for gesture recognition
-        button.setText("START GESTURE RECOGNITION");
         return true;
     }
 
@@ -92,7 +96,7 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
 
     @Override
     public void onActivityResult(int receivedCode, int resultCode, Intent data) {
-        if(receivedCode == requestCode) {Log.w(TAG, Integer.toString(resultCode));
+        if(receivedCode == requestCode) {
             if(resultCode == OK) {
                 // When smartphone got informed about gesture recognition
             }
@@ -112,7 +116,6 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
 
             }
         }
-        Log.d(TAG, "salle");
     }
 
     @Override
