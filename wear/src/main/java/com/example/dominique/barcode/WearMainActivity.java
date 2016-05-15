@@ -22,7 +22,6 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
             new SimpleDateFormat("HH:mm", Locale.US);
     private static final String TAG = "TAG";
 
-    public static final int OK = 0;
     public static final int CONNECTION_FAIL = 1;
     public static final int NO_TARGETS = 2;
     public static final int ALL_RECEIVED  = 3;
@@ -97,23 +96,21 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     @Override
     public void onActivityResult(int receivedCode, int resultCode, Intent data) {
         if(receivedCode == requestCode) {
-            if(resultCode == OK) {
-                // When smartphone got informed about gesture recognition
-            }
             if(resultCode == CONNECTION_FAIL) {
-                // When connection failure to smart phone
+                Toast.makeText(getApplicationContext(), "Connection failure", Toast.LENGTH_LONG).show();
             }
             if(resultCode == CONNECTION_SUSPEND) {
-
+                Toast.makeText(getApplicationContext(), "Connection suspended", Toast.LENGTH_LONG).show();
             }
             if(resultCode == NO_TARGETS) {
-
+                Toast.makeText(getApplicationContext(), "No target device." +
+                        "Make sure watch is paired with target devices", Toast.LENGTH_LONG).show();
             }
             if(resultCode == ALL_RECEIVED) {
-
+                Toast.makeText(getApplicationContext(), "All targets received the signal", Toast.LENGTH_LONG).show();
             }
             if(resultCode == NOT_ALL_RECEIVED) {
-
+                Toast.makeText(getApplicationContext(), "Some targets didn't receive the signal", Toast.LENGTH_LONG).show();
             }
         }
     }

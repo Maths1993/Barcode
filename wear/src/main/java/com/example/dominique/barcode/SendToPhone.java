@@ -61,7 +61,7 @@ public class SendToPhone extends Activity implements
     public void onConnectionSuspended(int errorCode) {
         text.setText("Connection suspendened. Code: " + errorCode);
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(responseName, WearMainActivity.CONNECTION_FAIL);
+        returnIntent.putExtra(responseName, WearMainActivity.CONNECTION_SUSPEND);
         setResult(WearMainActivity.CONNECTION_SUSPEND, returnIntent);
         finish();
     }
