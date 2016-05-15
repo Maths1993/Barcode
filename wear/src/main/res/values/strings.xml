@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GestureRecognition</string>
     <string name="gestureStart">Start gesture recognition</string>
+    <string name="recordStart">Start recording</string>
 </resources>

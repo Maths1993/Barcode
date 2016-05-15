@@ -87,12 +87,13 @@ public class SendToPhone extends Activity implements
         }
 
         public void run() {
-            final Intent returnIntent = new Intent();
+            Intent returnIntent = new Intent();
             returnIntent.putExtra(responseName, responseCode);
             NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
             if(nodes.getNodes().isEmpty()) {
                 setResult(WearMainActivity.NO_TARGETS, returnIntent);
                 finish();
+                return;
             }
             for (Node node : nodes.getNodes()) {
                 MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(googleClient,

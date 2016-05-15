@@ -1,5 +1,6 @@
 package com.example.dominique.barcode;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -7,7 +8,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +16,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class WearMainActivity extends WearableActivity implements SensorEventListener {
+public class WearMainActivity extends Activity implements SensorEventListener {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
@@ -35,31 +35,13 @@ public class WearMainActivity extends WearableActivity implements SensorEventLis
     private Button button;
     private boolean active = false;
 
-    private long actualTime;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_main);
-        setAmbientEnabled();
 
         button = (Button) findViewById(R.id.button_gesture);
         //Log.w(TAG, "create");
-    }
-
-    @Override
-    public void onEnterAmbient(Bundle ambientDetails) {
-        super.onEnterAmbient(ambientDetails);
-    }
-
-    @Override
-    public void onUpdateAmbient() {
-        super.onUpdateAmbient();
-    }
-
-    @Override
-    public void onExitAmbient() {
-        super.onExitAmbient();
     }
 
     @Override
