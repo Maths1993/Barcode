@@ -42,11 +42,9 @@ import java.util.concurrent.TimeUnit;
 
 public class WatchToGlass extends Activity implements
         DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
-    private TextView mTextView;
+
     private static final long CONNECTION_TIME_OUT_MS = 100;
-    private static final String ON_MESSAGE = "On!";
-    private static final String OFF_MESSAGE = "Off!";
-    private static final String TAG = "MobistelDisplayControl";
+
 
     private String nodeId;
 
@@ -59,14 +57,18 @@ public class WatchToGlass extends Activity implements
     }
 
     private void retrieveDeviceNode() {
+        Toast.makeText(this, "retrieveDeviceNode() entered", Toast.LENGTH_LONG).show();
         new Thread(new Runnable() {
             @Override
             public void run() {
+
                 mGoogleApiClient.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
                 NodeApi.GetConnectedNodesResult result =
                         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
                 List<Node> nodes = result.getNodes();
+
                 if (nodes.size() > 0) {
+                    Log.d("node detected", nodes.get(0).getDisplayName());
                     nodeId = nodes.get(0).getId();
                 }
                 mGoogleApiClient.disconnect();
@@ -149,7 +151,7 @@ public class WatchToGlass extends Activity implements
         mGoogleApiClient.disconnect();
 
         if (assetInputStream == null) {
-            Log.w(TAG, "Requested an unknown Asset.");
+            Log.w("TAG", "Requested an unknown Asset.");
             return null;
         }
 
