@@ -1,1 +1,1 @@
-include ':mobile', ':wear', ':glass', ':myapplication', ':myapplicationwear', ':mobileRecognition'
+include ':mobile', ':wear', ':glass', ':myapplication', ':myapplicationwear', ':mobileRecognition', ':wearrecognition'

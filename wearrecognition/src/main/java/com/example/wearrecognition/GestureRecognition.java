@@ -1,21 +1,24 @@
-package com.example.mobilerecognition;
+package com.example.wearrecognition;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.wearable.activity.WearableActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 
-public class GestureRecognition extends Activity implements SensorEventListener {
+public class GestureRecognition extends WearableActivity implements SensorEventListener {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
@@ -38,7 +41,10 @@ public class GestureRecognition extends Activity implements SensorEventListener 
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-
+            String x = Float.toString(event.values[0]);
+            String y = Float.toString(event.values[1]);
+            String z = Float.toString(event.values[2]);
+            writeToFile(x,y,z);
         }
     }
 
@@ -58,15 +64,13 @@ public class GestureRecognition extends Activity implements SensorEventListener 
 
     public void handleClick(View view) {
         if(!active) {
-            if(accelerometerAccessible()) startRecording();
-            button.setText("END RECORDING");
-            active = true;
+            if(accelerometerAccessible()) button.setText("END RECORDING");
         } else {
             sensorManager.unregisterListener(this, accelerometer);
             endRecording();
             button.setText("START RECORDING");
-            active = false;
         }
+        active = !active;
     }
 
     public boolean accelerometerAccessible() {
@@ -87,8 +91,16 @@ public class GestureRecognition extends Activity implements SensorEventListener 
         return result;
     }
 
-    public void startRecording() {
-        // Use http://developer.android.com/training/basics/data-storage/shared-preferences.html
+    public void writeToFile(String x, String y, String z) {
+        try {
+            Context context = getApplicationContext();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("test.txt", Context.MODE_APPEND));
+            outputStreamWriter.write(x);Log.w("TAG", "write...");
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
     }
 
     public void endRecording() {
