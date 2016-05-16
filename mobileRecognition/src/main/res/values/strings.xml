@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">mobileRecognition</string>
+    <string name="recordStart">Start recording</string>
+</resources>
