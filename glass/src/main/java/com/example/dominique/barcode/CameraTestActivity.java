@@ -14,6 +14,7 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -56,6 +57,10 @@ public class CameraTestActivity extends Activity
 
         autoFocusHandler = new Handler();
         mCamera = getCameraInstance();
+
+        Camera.Parameters params = mCamera.getParameters();
+        params.setPreviewSize(1280,960);
+        mCamera.setParameters(params);
 
         /* Instance barcode scanner */
         scanner = new ImageScanner();
@@ -118,9 +123,13 @@ public class CameraTestActivity extends Activity
     PreviewCallback previewCb = new PreviewCallback() {
             public void onPreviewFrame(byte[] data, Camera camera) {
                 Camera.Parameters parameters = camera.getParameters();
-                Size size = parameters.getPreviewSize();
+                parameters.getSupportedPreviewSizes();
+                //Size size = parameters.getPreviewSize();
 
-                Image barcode = new Image(size.width, size.height, "Y800");
+                for(Size size : parameters.getSupportedPreviewSizes())
+                Log.d("size", size.width + " " + size.height);
+
+                Image barcode = new Image(1280, 960, "Y800");
                 barcode.setData(data);
 
                 int result = scanner.scanImage(barcode);

@@ -18,18 +18,6 @@
             <option value="$PROJECT_DIR$/wearrecognition" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/glass" />
-            <option value="$PROJECT_DIR$/mobile" />
-            <option value="$PROJECT_DIR$/mobileRecognition" />
-            <option value="$PROJECT_DIR$/myapplication" />
-            <option value="$PROJECT_DIR$/myapplicationwear" />
-            <option value="$PROJECT_DIR$/wear" />
-            <option value="$PROJECT_DIR$/wearrecognition" />
-          </set>
-        </option>
       </GradleProjectSettings>
     </option>
   </component>
