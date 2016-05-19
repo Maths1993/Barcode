@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    jcenter()
+    flatDir {
+        dirs 'prebuilt-libs'
+    }
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
