@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.dominique.barcode.PhoneToDatabase"
+    tools:deviceIds="mobile">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/store_in_database"
+            android:onClick="storeInDatabase"
+            android:id="@+id/button_store_database" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/search_in_database"
+            android:onClick="searchInDatabase"
+            android:id="@+id/button_search_database" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/reject"
+            android:onClick="rejectFromDatabase"
+            android:id="@+id/button_reject" />
+
+
+    </LinearLayout>

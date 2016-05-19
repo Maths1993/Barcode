@@ -27,7 +27,7 @@ public class WearMainActivity extends Activity implements SensorEventListener {
     public static final int ALL_RECEIVED  = 3;
     public static final int NOT_ALL_RECEIVED = 4;
     public static final int CONNECTION_SUSPEND = 5;
-    public final int requestCode = 0;
+    public static final int requestCode = 0;
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -99,7 +99,6 @@ public class WearMainActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
     public void handleAccelerometer(View view) {

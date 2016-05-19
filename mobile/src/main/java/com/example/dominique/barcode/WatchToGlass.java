@@ -1,28 +1,17 @@
 package com.example.dominique.barcode;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import
-        com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
@@ -33,27 +22,25 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class WatchToGlass extends Activity implements
-        DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final long CONNECTION_TIME_OUT_MS = 100;
-
+    public static final int requestCode = 0;
+    public static final int OK = 1;
+    public static final int NOT_OK = 2;
 
     private String nodeId;
-
     private GoogleApiClient mGoogleApiClient;
 
-
     private  void startApiClient() {
-    mGoogleApiClient = getGoogleApiClient(this);
-    retrieveDeviceNode();
+        mGoogleApiClient = getGoogleApiClient(this);
+        retrieveDeviceNode();
     }
 
     private void retrieveDeviceNode() {
@@ -87,21 +74,26 @@ public class WatchToGlass extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    startApiClient();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Intent requestIntent = new Intent(this, PhoneToDatabase.class);
+        requestIntent.putExtra("barcode", "001");
+        startActivityForResult(requestIntent, requestCode);
 
+        startApiClient();
     }
 
-
-
+    @Override
+    public void onActivityResult(int receivedCode, int resultCode, Intent data) {
+        if(receivedCode == requestCode) {
+            if(resultCode == OK) {
+                Toast.makeText(getApplicationContext(), "Code added to DB", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
     private Asset createAnAsset(int message) {
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(message);
         return Asset.createFromBytes(outputStream.toByteArray());
-
     }
 
     private void putInDataStore() {
@@ -111,13 +103,8 @@ public class WatchToGlass extends Activity implements
         Wearable.DataApi.putDataItem(mGoogleApiClient, request);
     }
 
-
-
     public void onStart() {
         super.onStart();
-
-
-
         mGoogleApiClient.connect();
 
     }
@@ -158,8 +145,6 @@ public class WatchToGlass extends Activity implements
         // Decode the stream into a bitmap
         return BitmapFactory.decodeStream(assetInputStream);
     }
-
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
