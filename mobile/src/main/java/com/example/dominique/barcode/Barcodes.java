@@ -5,28 +5,13 @@ public class Barcodes {
     private String code;
     private String description;
     private String price;
-    private String date;
+    private String location;
 
-    public Barcodes(String code) {
-        this.code = code;
-    }
-
-    public Barcodes(String code, String description) {
-        this.code = code;
-        this.description = description;
-    }
-
-    public Barcodes(String code, String description, String price) {
+    public Barcodes(String code, String description, String price, String location) {
         this.code = code;
         this.description = description;
         this.price = price;
-    }
-
-    public Barcodes(String code, String description, String price, String date) {
-        this.code = code;
-        this.description = description;
-        this.price = price;
-        this.date = date;
+        this.location = location;
     }
 
     public String getCode() {
@@ -41,7 +26,7 @@ public class Barcodes {
         return this.price;
     }
 
-    public String getDate() {
-        return this.date;
+    public String getLocation() {
+        return this.location;
     }
 }

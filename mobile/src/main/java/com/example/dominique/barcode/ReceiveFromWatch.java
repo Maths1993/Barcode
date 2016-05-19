@@ -16,4 +16,5 @@ public class ReceiveFromWatch extends WearableListenerService {
             super.onMessageReceived(messageEvent);
         }
     }
+
 }

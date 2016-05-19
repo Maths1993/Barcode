@@ -4,4 +4,9 @@
     <string name="store_in_database">STORE IN DATABASE</string>
     <string name="search_in_database">SEARCH IN DATABASE</string>
     <string name="reject">REJECT</string>
+    <string name="apply">APPLY</string>
+    <string name="code">CODE</string>
+    <string name="description">DESCRIPTION</string>
+    <string name="price">PRICE</string>
+    <string name="location">LOCATION</string>
 </resources>

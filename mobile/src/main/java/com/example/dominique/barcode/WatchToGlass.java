@@ -76,7 +76,7 @@ public class WatchToGlass extends Activity implements
         setContentView(R.layout.activity_main);
 
         Intent requestIntent = new Intent(this, PhoneToDatabase.class);
-        requestIntent.putExtra("barcode", "001");
+        requestIntent.putExtra("barcode", "test03");
         startActivityForResult(requestIntent, requestCode);
 
         startApiClient();

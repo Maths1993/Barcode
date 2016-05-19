@@ -10,6 +10,11 @@
     tools:context="com.example.dominique.barcode.PhoneToDatabase"
     tools:deviceIds="mobile">
 
+        <TextView
+            android:id="@+id/text_barcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,12 +29,10 @@
             android:onClick="searchInDatabase"
             android:id="@+id/button_search_database" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/reject"
-            android:onClick="rejectFromDatabase"
-            android:id="@+id/button_reject" />
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_gravity="center_horizontal" />
 
-
-    </LinearLayout>
+</LinearLayout>

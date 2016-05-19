@@ -1,6 +1,5 @@
 package com.example.dominique.barcode;
 
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
