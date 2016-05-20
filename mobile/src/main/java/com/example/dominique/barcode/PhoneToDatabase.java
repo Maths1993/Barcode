@@ -186,6 +186,7 @@ public class PhoneToDatabase extends Activity {
                 else {
                     Intent requestIntent = new Intent(getApplicationContext(), BarcodeSettings.class);
                     requestIntent.putExtra("store", "no duplicate");
+                    requestIntent.putExtra("code", barcode);
                     startActivityForResult(requestIntent, requestCode);
                 }
             }
