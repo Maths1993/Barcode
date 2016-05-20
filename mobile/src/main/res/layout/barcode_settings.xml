@@ -5,6 +5,17 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/text_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/code" />
+
+    <EditText
+        android:id="@+id/text_barcode_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:id="@+id/text_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

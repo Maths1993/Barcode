@@ -22,17 +22,11 @@
             android:onClick="storeInDatabase"
             android:id="@+id/button_store_database" />
 
-        <Button
+        <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/search_in_database"
-            android:onClick="searchInDatabase"
-            android:id="@+id/button_search_database" />
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_gravity="center_horizontal" />
+            android:id="@+id/listView"
+            android:layout_gravity="center_horizontal"
+            android:theme="@android:style/Theme.Light" />
 
 </LinearLayout>

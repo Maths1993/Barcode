@@ -5,8 +5,11 @@
     <string name="search_in_database">SEARCH IN DATABASE</string>
     <string name="reject">REJECT</string>
     <string name="apply">APPLY</string>
-    <string name="code">CODE</string>
-    <string name="description">DESCRIPTION</string>
-    <string name="price">PRICE</string>
-    <string name="location">LOCATION</string>
+    <string name="code">CODE: </string>
+    <string name="description">DESCRIPTION: </string>
+    <string name="price">PRICE: </string>
+    <string name="location">LOCATION: </string>
+    <string name="ask">DO YOU WANT TO DELETE THE BARCODE?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 </resources>
