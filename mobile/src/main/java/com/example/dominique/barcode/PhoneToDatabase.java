@@ -125,6 +125,7 @@ public class PhoneToDatabase extends Activity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    init(dataSnapshot);
                     // Remove old entry
                     adapter.notifyDataSetChanged();
                     data.remove(cache.get(code));
@@ -211,9 +212,6 @@ public class PhoneToDatabase extends Activity {
                 Map<String, Object> map = new ObjectMapper().convertValue(obj, Map.class);
                 database.child(code).updateChildren(map);
 
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra(responseName, WatchToGlass.OK);
-                setResult(WatchToGlass.OK, returnIntent);
             }
             if(resultCode == DELETE) {
                 database.child(data.getStringExtra("code")).removeValue();
