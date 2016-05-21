@@ -219,4 +219,3 @@ public class PhoneToDatabase extends Activity {
         }
     }
 }
-

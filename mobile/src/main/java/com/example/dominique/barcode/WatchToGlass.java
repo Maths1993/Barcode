@@ -1,10 +1,13 @@
 package com.example.dominique.barcode;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -27,6 +30,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.dfki.ccaal.gestures.IGestureRecognitionService;
+
 public class WatchToGlass extends Activity implements
         DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -37,6 +42,9 @@ public class WatchToGlass extends Activity implements
 
     private String nodeId;
     private GoogleApiClient mGoogleApiClient;
+    private IBinder gestureListenerStub;
+    private IGestureRecognitionService recognitionService;
+    private ServiceConnection gestureConnection;
 
     private  void startApiClient() {
         mGoogleApiClient = getGoogleApiClient(this);
@@ -75,9 +83,45 @@ public class WatchToGlass extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent requestIntent = new Intent(this, PhoneToDatabase.class);
+   /*     Intent requestIntent = new Intent(this, PhoneToDatabase.class);
         requestIntent.putExtra("barcode", "test03");
-        startActivityForResult(requestIntent, requestCode);
+        startActivityForResult(requestIntent, requestCode);*/
+
+       /* gestureListenerStub = new IGestureRecognitionListener.Stub() {
+
+            @Override
+            public void onGestureLearned(String gestureName) throws RemoteException {
+                System.out.println("Gesture" + gestureName + "learned!");
+            }
+
+            @Override
+            public void onGestureRecognized(Distribution distribution) throws RemoteException {
+                System.out.println(String.format("%s %f", distribution.getBestMatch(), distribution.getBestDistance()));
+            }
+
+            @Override
+            public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
+                System.out.println("Training Set " + trainingSet + " deleted!");
+            }
+        };
+
+        gestureConnection = new ServiceConnection() {
+
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                recognitionService = IGestureRecognitionService.Stub.asInterface(service);
+                try {
+                    recognitionService.registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            public void onServiceDisconnected(ComponentName className) {
+            }
+        };
+
+        Intent gestureBindIntent = new Intent("de.dfki.ccaal.gestures.GESTURE_RECOGNIZER");
+        gestureBindIntent.setPackage(this.getPackageName());
+        getApplicationContext().bindService(gestureBindIntent, gestureConnection, Context.BIND_AUTO_CREATE);*/
 
         startApiClient();
     }
