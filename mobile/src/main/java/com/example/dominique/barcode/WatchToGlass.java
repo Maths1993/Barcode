@@ -83,46 +83,6 @@ public class WatchToGlass extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-   /*     Intent requestIntent = new Intent(this, PhoneToDatabase.class);
-        requestIntent.putExtra("barcode", "test03");
-        startActivityForResult(requestIntent, requestCode);*/
-
-       /* gestureListenerStub = new IGestureRecognitionListener.Stub() {
-
-            @Override
-            public void onGestureLearned(String gestureName) throws RemoteException {
-                System.out.println("Gesture" + gestureName + "learned!");
-            }
-
-            @Override
-            public void onGestureRecognized(Distribution distribution) throws RemoteException {
-                System.out.println(String.format("%s %f", distribution.getBestMatch(), distribution.getBestDistance()));
-            }
-
-            @Override
-            public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-                System.out.println("Training Set " + trainingSet + " deleted!");
-            }
-        };
-
-        gestureConnection = new ServiceConnection() {
-
-            public void onServiceConnected(ComponentName className, IBinder service) {
-                recognitionService = IGestureRecognitionService.Stub.asInterface(service);
-                try {
-                    recognitionService.registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-            public void onServiceDisconnected(ComponentName className) {
-            }
-        };
-
-        Intent gestureBindIntent = new Intent("de.dfki.ccaal.gestures.GESTURE_RECOGNIZER");
-        gestureBindIntent.setPackage(this.getPackageName());
-        getApplicationContext().bindService(gestureBindIntent, gestureConnection, Context.BIND_AUTO_CREATE);*/
-
         startApiClient();
     }
 
