@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.dfki.ccaal.gestures;
+package de.dfki.ccaal.gestures.classifier;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -28,7 +28,7 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Distribution implements Parcelable {
+public class Distribution extends de.dfki.ccaal.gestures.Distribution implements Parcelable {
 	private final Map<String, Double> distribution;
 	String best;
 	double minDistance = Double.MAX_VALUE;

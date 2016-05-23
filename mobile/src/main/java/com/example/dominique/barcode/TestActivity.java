@@ -29,25 +29,27 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import de.dfki.ccaal.gestures.Distribution;
+import de.dfki.ccaal.gestures.GestureRecognitionService;
 import de.dfki.ccaal.gestures.IGestureRecognitionListener;
 import de.dfki.ccaal.gestures.IGestureRecognitionService;
 
 public class TestActivity extends Activity {
 
     IGestureRecognitionService recognitionService;
-    String trainingName = "training0";
-    String gestureName = "gesture0";
+    String trainingName = "training1";
+    String gestureName = "gesture1";
+    boolean classificationOn = false;
 
     private Button button_learning;
     private Button button_recognizing;
+    private EditText text_trainingName_edit;
+    private EditText text_gestureName_edit;
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -55,10 +57,8 @@ public class TestActivity extends Activity {
         public void onServiceConnected(ComponentName className, IBinder service) {
             recognitionService = IGestureRecognitionService.Stub.asInterface(service);
             try {
-                recognitionService.startClassificationMode(trainingName);
                 recognitionService.registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
             } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         }
@@ -73,14 +73,15 @@ public class TestActivity extends Activity {
 
         @Override
         public void onGestureLearned(String gestureName) throws RemoteException {
-            Toast.makeText(TestActivity.this, String.format("Gesture %s learned", gestureName), Toast.LENGTH_SHORT).show();
-            System.err.println("Gesture %s learned");
+            Toast.makeText(TestActivity.this, String.format("Gesture " + gestureName + " learned", gestureName), Toast.LENGTH_SHORT).show();
+            System.err.println("Gesture " + gestureName + " learned");
         }
 
         @Override
         public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-            Toast.makeText(TestActivity.this, String.format("Training set %s deleted", trainingSet), Toast.LENGTH_SHORT).show();
-            System.err.println(String.format("Training set %s deleted", trainingSet));
+            Toast.makeText(TestActivity.this, String.format("Training set " + trainingSet +
+                    " deleted", trainingSet), Toast.LENGTH_SHORT).show();
+            System.err.println(String.format("Training set " + trainingSet + " deleted", trainingSet));
         }
 
         @Override
@@ -88,8 +89,12 @@ public class TestActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(TestActivity.this, String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()), Toast.LENGTH_LONG).show();
-                    System.err.println(String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
+                    Toast.makeText(TestActivity.this, String.format("%s: %f",
+                            distribution.getBestMatch(),
+                            distribution.getBestDistance()), Toast.LENGTH_LONG).show();
+                    System.err.println(String.format("%s: %f",
+                            distribution.getBestMatch(),
+                            distribution.getBestDistance()));
                 }
             });
         }
@@ -103,33 +108,65 @@ public class TestActivity extends Activity {
 
         button_learning = (Button) findViewById(R.id.button_learning);
         button_recognizing = (Button) findViewById(R.id.button_recognizing);
+        text_gestureName_edit = (EditText) findViewById(R.id.text_gestureName_edit);
+        text_trainingName_edit = (EditText) findViewById(R.id.text_trainingName_edit);
 
-        button_learning.setOnClickListener(new OnClickListener() {
+        button_learning.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (recognitionService != null) {
                     try {
-                        if (!recognitionService.isLearning()) {
-                            button_learning.setText("Stop learning");
-                            recognitionService.startLearnMode(trainingName, gestureName);
+                        if(classificationOn) {
+                            Toast.makeText(TestActivity.this, "First deactivate recognition mode!",
+                                    Toast.LENGTH_SHORT).show();
                         } else {
-                            button_learning.setText("Start learning");
-                            recognitionService.stopLearnMode();
+                            if (!recognitionService.isLearning()) {
+                                button_learning.setText("Stop learning");
+                                recognitionService.startLearnMode(trainingName, gestureName);
+                            } else {
+                                button_learning.setText("Start learning");
+                                recognitionService.stopLearnMode();
+                            }
                         }
                     } catch (RemoteException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
+
                 }
             }
         });
 
-        button_recognizing.setOnClickListener(new OnClickListener() {
+        button_recognizing.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 if (recognitionService != null) {
                     try {
-                        recognitionService.startClassificationMode(trainingName);
+                        if(recognitionService.isLearning()) {
+                            Toast.makeText(TestActivity.this, "First deactivate learn mode!",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (!classificationOn) {
+                                recognitionService.startClassificationMode(trainingName);
+                                classificationOn = true;
+                                button_recognizing.setText("Stop recognition");
+                            } else {
+                                // First unregister listener
+                                try {
+                                    recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                                recognitionService = null;
+                                unbindService(serviceConnection);
+                                // Then resume service to let the user put on the learn mode
+                                bindService(new Intent(TestActivity.this, GestureRecognitionService.class),
+                                        serviceConnection, Context.BIND_AUTO_CREATE);
+                                classificationOn = false;
+                                button_recognizing.setText("Start recognition");
+                            }
+                        }
+
                     } catch (RemoteException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -141,34 +178,25 @@ public class TestActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
-        return true;
-    }
-
-    @Override
     protected void onPause() {
-        try {
-            recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-        } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        recognitionService = null;
-        unbindService(serviceConnection);
+        if (recognitionService != null) {
+            try {
+                recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            recognitionService = null;
+            unbindService(serviceConnection);
+            }
+
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        bindService(new Intent(TestActivity.this,
-                        GestureService.class), serviceConnection,
-                Context.BIND_AUTO_CREATE);
-
-       // Intent bindIntent = new Intent("Recognizer");
-       // bindIntent.setPackage(this.getPackageName());
-       // getApplicationContext().bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(TestActivity.this, GestureRecognitionService.class),
+                serviceConnection, Context.BIND_AUTO_CREATE);
         super.onResume();
     }
+
 }

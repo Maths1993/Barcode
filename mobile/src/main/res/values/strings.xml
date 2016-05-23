@@ -12,4 +12,6 @@
     <string name="ask">DO YOU WANT TO DELETE THE BARCODE?</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
+    <string name="trainingName">TRAINING NAME:</string>
+    <string name="gestureName">GESTURE NAME:</string>
 </resources>

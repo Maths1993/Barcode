@@ -4,8 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
 
 public final class GestureService extends Service {
     private final static String TAG = "Main Service";
@@ -14,8 +12,6 @@ public final class GestureService extends Service {
     @Override
     public final void onCreate() {
         super.onCreate();
-        Log.d(TAG, "Service created!!!!!!");
-        Toast.makeText(this, "Service created", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -23,18 +19,16 @@ public final class GestureService extends Service {
         return START_STICKY;
     }
 
-
     @Override
     public final void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "Service created");
-        Toast.makeText(this, "Service destroyed", Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public final IBinder onBind(final Intent intent) {
-        return this.binder;
+        return binder;
+        //return null;
     }
 
     public final class MainServiceBinder extends Binder {

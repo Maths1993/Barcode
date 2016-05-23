@@ -23,7 +23,7 @@
 			android:largeHeap="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 
 			<meta-data
@@ -36,7 +36,7 @@
 			android:largeHeap="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 
 			<meta-data
@@ -94,7 +94,7 @@
 
 		</service>
 
-		<service android:name=".GestureService"
+		<service android:name="de.dfki.ccaal.gestures.GestureRecognitionService"
 			android:enabled="true" android:label="GestureRecognitionService">
 			<intent-filter>
 				<action android:name="Recognizer" />
