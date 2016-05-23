@@ -13,5 +13,7 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="trainingName">TRAINING NAME:</string>
-    <string name="gestureName">GESTURE NAME:</string>
+    <string name="gestureNameForTrainingSet">GESTURE NAME FOR TRAINING SET:</string>
+    <string name="gestureNameForRecognition">GESTURE NAME FOR RECOGNITION:</string>
+    <string name="availableSets">AVAILABLE TRAINING AND GESTURE NAMES:</string>
 </resources>
