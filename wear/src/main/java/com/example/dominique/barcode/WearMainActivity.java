@@ -41,7 +41,6 @@ public class WearMainActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.activity_phone_main);
 
         button = (Button) findViewById(R.id.button_gesture);
-        //Log.w(TAG, "create");
     }
 
     @Override
