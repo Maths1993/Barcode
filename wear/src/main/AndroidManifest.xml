@@ -3,7 +3,6 @@
     package="com.example.dominique.barcode">
 
     <uses-feature android:name="android.hardware.type.watch" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -12,6 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
+
         <uses-library
             android:name="com.google.android.wearable"
             android:required="false" />
@@ -23,21 +23,8 @@
             android:theme="@android:style/Theme.DeviceDefault.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".TestActivity"
-            android:largeHeap="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
         </activity>
 
         <activity

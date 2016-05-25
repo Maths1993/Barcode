@@ -1,9 +1,3 @@
 <resources>
     <string name="app_name">GestureRecognition</string>
-    <string name="gestureStart">Start gesture recognition</string>
-    <string name="recordStart">Start recording</string>
-    <string name="trainingName">TRAINING NAME:</string>
-    <string name="gestureNameForTrainingSet">GESTURE NAME FOR TRAINING SET:</string>
-    <string name="gestureNameForRecognition">GESTURE NAME FOR RECOGNITION:</string>
-    <string name="availableSets">AVAILABLE TRAINING AND GESTURE NAMES:</string>
 </resources>

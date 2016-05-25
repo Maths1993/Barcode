@@ -1,27 +1,26 @@
 package com.example.dominique.barcode;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import de.dfki.ccaal.gestures.Distribution;
+import de.dfki.ccaal.gestures.GestureRecognitionService;
+import de.dfki.ccaal.gestures.IGestureRecognitionListener;
+import de.dfki.ccaal.gestures.IGestureRecognitionService;
 
-public class WearMainActivity extends Activity implements SensorEventListener {
+public class WearMainActivity extends Activity {
 
-    private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
-            new SimpleDateFormat("HH:mm", Locale.US);
     private static final String TAG = "TAG";
-
     public static final int CONNECTION_FAIL = 1;
     public static final int NO_TARGETS = 2;
     public static final int ALL_RECEIVED  = 3;
@@ -29,45 +28,150 @@ public class WearMainActivity extends Activity implements SensorEventListener {
     public static final int CONNECTION_SUSPEND = 5;
     public static final int requestCode = 0;
 
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
 
-    private Button button;
-    private boolean active = false;
+    IGestureRecognitionService recognitionService;
+    String trainingName = "training1";
+    String gestureName = "gesture1";
+    boolean classificationOn = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phone_main);
+    private Button button_learning;
+    private Button button_recognizing;
+    private EditText text_trainingName_edit;
+    private EditText text_gestureNameLearn_edit;
+    private EditText text_gestureNameRecognize_edit;
 
-        button = (Button) findViewById(R.id.button_gesture);
-    }
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        long oldTime = 0;
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            // Code for sampling data comes here
-            float x_acc = event.values[0];
-            float y_acc = event.values[1];
-            float z_acc = event.values[2];
-            long actualTime = event.timestamp/1000000;
-
-            // Write values to console
-            Log.e(TAG, "x: "+x_acc+" y: "+y_acc+" z: "+z_acc+" time: "+ (actualTime));
-
-            if(gestureRecognized()) {
-                button.setText("START GESTURE RECOGNITION");
-                sensorManager.unregisterListener(this, accelerometer);
-                sendToPhone();
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            recognitionService = IGestureRecognitionService.Stub.asInterface(service);
+            try {
+                recognitionService.registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+            } catch (RemoteException e1) {
+                e1.printStackTrace();
             }
         }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            recognitionService = null;
+        }
+    };
+
+    IBinder gestureListenerStub = new IGestureRecognitionListener.Stub() {
+
+        @Override
+        public void onGestureLearned(String gestureName) throws RemoteException {
+            Toast.makeText(WearMainActivity.this, String.format("Gesture " + gestureName + " learned", gestureName), Toast.LENGTH_SHORT).show();
+            System.err.println("Gesture " + gestureName + " learned");
+        }
+
+        @Override
+        public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
+            Toast.makeText(WearMainActivity.this, String.format("Training set " + trainingSet +
+                    " deleted", trainingSet), Toast.LENGTH_SHORT).show();
+            System.err.println(String.format("Training set " + trainingSet + " deleted", trainingSet));
+        }
+
+        @Override
+        public void onGestureRecognized(final Distribution distribution) throws RemoteException {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(WearMainActivity.this, String.format("%s: %f",
+                            distribution.getBestMatch(),
+                            distribution.getBestDistance()), Toast.LENGTH_SHORT).show();
+                    if(isTrueGesture(distribution.getBestDistance())) {
+                        reconfigureRecognition();
+                        sendToPhone();
+                    }
+                }
+            });
+        }
+    };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.gesture);
+
+        button_learning = (Button) findViewById(R.id.button_learning);
+        button_recognizing = (Button) findViewById(R.id.button_recognizing);
+
+        button_learning.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (recognitionService != null) {
+                    try {
+                        if(classificationOn) {
+                            Toast.makeText(WearMainActivity.this, "First deactivate recognition mode!",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (!recognitionService.isLearning()) {
+                                button_learning.setText("Stop learning");
+                                recognitionService.startLearnMode(trainingName, gestureName);
+                            } else {
+                                button_learning.setText("Start learning");
+                                recognitionService.stopLearnMode();
+                            }
+                        }
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
+        button_recognizing.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                if (recognitionService != null) {
+                    try {
+                        if(recognitionService.isLearning()) {
+                            Toast.makeText(WearMainActivity.this, "First deactivate learn mode!",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (!classificationOn) {
+                                recognitionService.startClassificationMode(trainingName);
+                                button_recognizing.setText("Stop recognition");
+                            } else {
+                                reconfigureRecognition();
+                                button_recognizing.setText("Start recognition");
+                            }
+                            classificationOn = !classificationOn;
+                        }
+
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
-    public boolean gestureRecognized() {
-        // TODO: Code for gesture recognition
-        return true;
+    // TODO: Set thresholds for recognizing the gesture, ...
+    public boolean isTrueGesture(Double distance) {
+        return distance < 5;
     }
+
+    public void reconfigureRecognition() {
+        try {
+            recognitionService.unregisterListener(IGestureRecognitionListener.Stub.
+                    asInterface(gestureListenerStub));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        recognitionService = null;
+        unbindService(serviceConnection);
+        bindService(new Intent(WearMainActivity.this, GestureRecognitionService.class),
+                serviceConnection, Context.BIND_AUTO_CREATE);
+        classificationOn = false;
+        button_recognizing.setText("Start recognition");
+    }
+
 
     public void sendToPhone() {
         Intent requestIntent = new Intent(this, SendToPhone.class);
@@ -97,41 +201,25 @@ public class WearMainActivity extends Activity implements SensorEventListener {
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
-
-    public void handleAccelerometer(View view) {
-        if(!active) {
-            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            if (sensorManager == null) {
-                Toast.makeText(getApplicationContext(), "Couldn't acquire sensor manager", Toast.LENGTH_LONG).show();
-                return;
+    protected void onPause() {
+        if (recognitionService != null) {
+            try {
+                recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
-            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            if (accelerometer == null) {
-                Toast.makeText(getApplicationContext(), "Accelerometer doesn't exist", Toast.LENGTH_LONG).show();
-                return;
-            }
-            boolean result = sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-            if (!result) {
-                Toast.makeText(getApplicationContext(), "Couldn't register listener for accelerometer", Toast.LENGTH_LONG).show();
-                return;
-            }
-            button.setText("END GESTURE RECOGNITION");
-            active = true;
-        } else {
-            sensorManager.unregisterListener(this, accelerometer);
-            button.setText("START GESTURE RECOGNITION");
-            active = false;
+            recognitionService = null;
+            unbindService(serviceConnection);
         }
+
+        super.onPause();
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if(active) {
-            sensorManager.unregisterListener(this, accelerometer);
-            active = false;
-        }
+    protected void onResume() {
+        bindService(new Intent(WearMainActivity.this, GestureRecognitionService.class),
+                serviceConnection, Context.BIND_AUTO_CREATE);
+        super.onResume();
     }
+
 }

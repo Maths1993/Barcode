@@ -3,11 +3,9 @@ package com.example.dominique.barcode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -30,8 +28,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.dfki.ccaal.gestures.IGestureRecognitionService;
-
 public class WatchToGlass extends Activity implements
         DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -42,9 +38,6 @@ public class WatchToGlass extends Activity implements
 
     private String nodeId;
     private GoogleApiClient mGoogleApiClient;
-    private IBinder gestureListenerStub;
-    private IGestureRecognitionService recognitionService;
-    private ServiceConnection gestureConnection;
 
     private  void startApiClient() {
         mGoogleApiClient = getGoogleApiClient(this);
