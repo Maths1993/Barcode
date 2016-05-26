@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import de.dfki.ccaal.gestures.Distribution;
@@ -36,9 +35,6 @@ public class WearMainActivity extends Activity {
 
     private Button button_learning;
     private Button button_recognizing;
-    private EditText text_trainingName_edit;
-    private EditText text_gestureNameLearn_edit;
-    private EditText text_gestureNameRecognize_edit;
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -136,11 +132,11 @@ public class WearMainActivity extends Activity {
                             if (!classificationOn) {
                                 recognitionService.startClassificationMode(trainingName);
                                 button_recognizing.setText("Stop recognition");
+                                classificationOn = true;
                             } else {
                                 reconfigureRecognition();
                                 button_recognizing.setText("Start recognition");
                             }
-                            classificationOn = !classificationOn;
                         }
 
                     } catch (RemoteException e) {
