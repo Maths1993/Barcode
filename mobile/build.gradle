@@ -11,9 +11,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
-    dexOptions {
-        javaMaxHeapSize "4g"
-    }
+
     defaultConfig {
         applicationId "com.example.dominique.barcode"
         minSdkVersion 19
@@ -22,18 +20,31 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
-gradle
-repositories {
-    mavenCentral()
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "4g"
+    }
 }
 
+afterEvaluate {
+    tasks.matching {
+        it.name.startsWith('dex')
+    }.each { dx ->
+        if (dx.additionalParameters == null) {
+            dx.additionalParameters = ['--multi-dex']
+        } else {
+            dx.additionalParameters += '--multi-dex'
+        }
+    }
+}
 
 
 dependencies {
