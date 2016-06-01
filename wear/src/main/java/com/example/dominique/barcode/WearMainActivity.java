@@ -26,11 +26,12 @@ public class WearMainActivity extends Activity {
     public static final int NOT_ALL_RECEIVED = 4;
     public static final int CONNECTION_SUSPEND = 5;
     public static final int requestCode = 0;
+    int i = 0;
 
 
-    IGestureRecognitionService recognitionService;
-    String trainingName = "training1";
-    String gestureName = "gesture1";
+    static IGestureRecognitionService recognitionService;
+    final static String trainingName = "training1";
+    final static String gestureName = "gesture1";
     boolean classificationOn = false;
 
     private Button button_learning;
@@ -58,8 +59,9 @@ public class WearMainActivity extends Activity {
 
         @Override
         public void onGestureLearned(String gestureName) throws RemoteException {
-            Toast.makeText(WearMainActivity.this, String.format("Gesture " + gestureName + " learned", gestureName), Toast.LENGTH_SHORT).show();
-            System.err.println("Gesture " + gestureName + " learned");
+            Toast.makeText(WearMainActivity.this, String.format("Gesture learned" + i, gestureName), Toast.LENGTH_SHORT).show();
+           // System.err.println("Gesture learned");
+            i++;
         }
 
         @Override
@@ -104,7 +106,18 @@ public class WearMainActivity extends Activity {
                         } else {
                             if (!recognitionService.isLearning()) {
                                 button_learning.setText("Stop learning");
-                                recognitionService.startLearnMode(trainingName, gestureName);
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        super.run();
+
+                                    try {
+                                        recognitionService.startLearnMode(trainingName, gestureName);
+                                    } catch (RemoteException e) {
+                                        //
+                                    }
+                                    }
+                                }.start();
                             } else {
                                 button_learning.setText("Start learning");
                                 recognitionService.stopLearnMode();

@@ -37,6 +37,8 @@ public class GestureRecorder implements SensorEventListener {
 
 	final int MIN_GESTURE_SIZE = 8;
 	float THRESHOLD = 2;
+	//DEFAULT: final int STEPCOUNT = 10;
+	final int STEPCOUNT = 10;
 	SensorManager sensorManager;
 	boolean isRecording;
 
@@ -105,7 +107,6 @@ public class GestureRecorder implements SensorEventListener {
 		case MOTION_DETECTION:
 			if (isRecording) {
 				gestureValues.add(value);
-				//System.out.println(calcVectorNorm(value));
 				if (calcVectorNorm(value) < THRESHOLD) {
 					stepsSinceNoMovement++;
 				} else {
@@ -117,11 +118,11 @@ public class GestureRecorder implements SensorEventListener {
 				gestureValues = new ArrayList<float[]>();
 				gestureValues.add(value);
 			}
-			if (stepsSinceNoMovement == 10) {
+			if (stepsSinceNoMovement == STEPCOUNT) {
 
-				System.out.println("Length is: " + String.valueOf(gestureValues.size() - 10));
-				if (gestureValues.size() - 10 > MIN_GESTURE_SIZE) {
-					listener.onGestureRecorded(gestureValues.subList(0, gestureValues.size() - 10));
+				System.out.println("Length is: " + String.valueOf(gestureValues.size() - STEPCOUNT));
+				if (gestureValues.size() - STEPCOUNT > MIN_GESTURE_SIZE) {
+					listener.onGestureRecorded(gestureValues.subList(0, gestureValues.size() - STEPCOUNT));
 				}
 				gestureValues = null;
 				stepsSinceNoMovement = 0;
@@ -148,7 +149,8 @@ public class GestureRecorder implements SensorEventListener {
 
 	public void start() {
 		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+		//DEFAULT: sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
 		isRunning = true;
 	}
 
@@ -166,7 +168,8 @@ public class GestureRecorder implements SensorEventListener {
 		if (b) {
 			sensorManager.unregisterListener(this);
 		} else {
-			sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+			//DEFAULT: sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+			sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
 		}
 	}
 
