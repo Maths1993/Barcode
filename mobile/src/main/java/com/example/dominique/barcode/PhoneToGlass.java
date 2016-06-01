@@ -1,32 +1,34 @@
 package com.example.dominique.barcode;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.multidex.MultiDex;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
-
 import java.util.HashSet;
 import java.util.Set;
+
 
 public class PhoneToGlass extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
 
     private String nodeId;
-    public static byte[] data = new byte[] { (byte)0xe0 };
+
     private GoogleApiClient mGoogleApiClient;
     Context context = this;
     private static final String responseName = "0";
@@ -39,21 +41,18 @@ public class PhoneToGlass extends Activity implements
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
+
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-        boolean wearAvailable = mGoogleApiClient.hasConnectedApi(Wearable.API);
-        Toast.makeText(this, "wearAvailable: " + wearAvailable,Toast.LENGTH_LONG).show();
+        //boolean wearAvailable = mGoogleApiClient.hasConnectedApi(Wearable.API);
+        //Toast.makeText(this, "wearAvailable: " + wearAvailable,Toast.LENGTH_LONG).show();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
 
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
+
 
     private Set<Node> getNodes() {
        Set<Node> setNode = new HashSet<>();
@@ -78,25 +77,10 @@ public class PhoneToGlass extends Activity implements
     }
 
 
-
-    public void sendToGlass() {
-        Wearable.MessageApi.sendMessage(mGoogleApiClient, "/glass",
-               pickBestNodeId(getNodes()), data).setResultCallback(
-                new ResultCallback() {
-                    @Override
-                    public void onResult(@NonNull Result result) {
-                        if (!result.getStatus().isSuccess()) {
-                            Log.d("sending","failed");
-                        }
-                    }
-                }
-        );
-    }
-
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-
+        Toast.makeText(this, "start connection" ,Toast.LENGTH_LONG).show();
     }
 
 
@@ -120,11 +104,13 @@ public class PhoneToGlass extends Activity implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         //Toast.makeText(this, "ConnectionFailed", Toast.LENGTH_LONG).show();
-    if(connectionResult != null) {
-        Log.d("connection error", connectionResult.toString());
-    }
-        else Log.d("connectionFailed", "null");
-    }
+       // if (connectionResult.getErrorCode() == ConnectionResult.API_UNAVAILABLE) {
+            Toast.makeText(this, "API Unavailable", Toast.LENGTH_LONG).show();
+        Log.d("error", connectionResult.toString());
+        }
+
+
+
 
     @Override
     protected void onStop() {
