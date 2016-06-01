@@ -105,6 +105,7 @@ public class GestureRecorder implements SensorEventListener {
 		case MOTION_DETECTION:
 			if (isRecording) {
 				gestureValues.add(value);
+				//System.out.println(calcVectorNorm(value));
 				if (calcVectorNorm(value) < THRESHOLD) {
 					stepsSinceNoMovement++;
 				} else {
