@@ -87,15 +87,10 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 			activeTrainingSet = trainingSetName;
 			activeLearnLabel = gestureName;
 			isLearning = true;
-			// recorder.setRecordMode(GestureRecorder.RecordMode.PUSH_TO_GESTURE);
 		}
 
 		@Override
-		public void stopLearnMode() throws RemoteException {
-			isLearning = false;
-
-			// recorder.setRecordMode(GestureRecorder.RecordMode.MOTION_DETECTION);
-		}
+		public void stopLearnMode() throws RemoteException { isLearning = false; }
 
 		@Override
 		public void unregisterListener(IGestureRecognitionListener listener) throws RemoteException {
@@ -150,7 +145,6 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 	@Override
 	public void onGestureRecorded(List<float[]> values) {
 		if (isLearning) {
-
 			classifier.trainData(activeTrainingSet, new Gesture(values, activeLearnLabel));
 			classifier.commitData();
 			for (IGestureRecognitionListener listener : listeners) {

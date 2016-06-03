@@ -26,7 +26,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -103,10 +102,6 @@ public class GestureRecorder implements SensorEventListener {
 
 		float[] value = { sensorEvent.values[SensorManager.DATA_X], sensorEvent.values[SensorManager.DATA_Y], sensorEvent.values[SensorManager.DATA_Z] };
 
-		String mean = Float.toString(calcVectorNorm(value));
-
-		Log.w("Values", mean);
-
 		switch (recordMode) {
 		case MOTION_DETECTION:
 			if (isRecording) {
@@ -151,7 +146,6 @@ public class GestureRecorder implements SensorEventListener {
 
 	public void start() {
 		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-		//DEFAULT: sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
 		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
 		isRunning = true;
 	}
@@ -167,11 +161,10 @@ public class GestureRecorder implements SensorEventListener {
 	}
 
 	public void pause(boolean b) {
-		if (b) {
-			sensorManager.unregisterListener(this);
-		} else {
-			//DEFAULT: sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-			sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
+		if (b) sensorManager.unregisterListener(this);
+		else {
+			sensorManager.registerListener(this, sensorManager.
+					getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
 		}
 	}
 

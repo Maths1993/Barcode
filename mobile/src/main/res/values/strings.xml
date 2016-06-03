@@ -16,4 +16,5 @@
     <string name="gestureNameForTrainingSet">GESTURE NAME FOR TRAINING SET:</string>
     <string name="gestureNameForRecognition">GESTURE NAME FOR RECOGNITION:</string>
     <string name="availableSets">AVAILABLE TRAINING AND GESTURE NAMES:</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
