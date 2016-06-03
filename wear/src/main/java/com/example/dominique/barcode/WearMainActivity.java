@@ -29,9 +29,9 @@ public class WearMainActivity extends Activity {
     int i = 0;
 
 
-    static IGestureRecognitionService recognitionService;
-    final static String trainingName = "training1";
-    final static String gestureName = "gesture1";
+    IGestureRecognitionService recognitionService;
+    final String trainingName = "training";
+    final String gestureName = "gesture";
     boolean classificationOn = false;
 
     private Button button_learning;
@@ -59,16 +59,12 @@ public class WearMainActivity extends Activity {
 
         @Override
         public void onGestureLearned(String gestureName) throws RemoteException {
-            Toast.makeText(WearMainActivity.this, String.format("Gesture learned" + i, gestureName), Toast.LENGTH_SHORT).show();
-           // System.err.println("Gesture learned");
-            i++;
+            Toast.makeText(WearMainActivity.this, "Gesture learned", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-            Toast.makeText(WearMainActivity.this, String.format("Training set " + trainingSet +
-                    " deleted", trainingSet), Toast.LENGTH_SHORT).show();
-            System.err.println(String.format("Training set " + trainingSet + " deleted", trainingSet));
+            Toast.makeText(WearMainActivity.this, "Training set deleted", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -100,24 +96,10 @@ public class WearMainActivity extends Activity {
             public void onClick(View v) {
                 if (recognitionService != null) {
                     try {
-                        if(classificationOn) {
-                            Toast.makeText(WearMainActivity.this, "First deactivate recognition mode!",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
+                        if(!classificationOn) {
                             if (!recognitionService.isLearning()) {
                                 button_learning.setText("Stop learning");
-                                new Thread() {
-                                    @Override
-                                    public void run() {
-                                        super.run();
-
-                                    try {
-                                        recognitionService.startLearnMode(trainingName, gestureName);
-                                    } catch (RemoteException e) {
-                                        //
-                                    }
-                                    }
-                                }.start();
+                                recognitionService.startLearnMode(trainingName, gestureName);
                             } else {
                                 button_learning.setText("Start learning");
                                 recognitionService.stopLearnMode();
@@ -138,10 +120,7 @@ public class WearMainActivity extends Activity {
             public void onClick(View arg0) {
                 if (recognitionService != null) {
                     try {
-                        if(recognitionService.isLearning()) {
-                            Toast.makeText(WearMainActivity.this, "First deactivate learn mode!",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
+                        if(!recognitionService.isLearning()) {
                             if (!classificationOn) {
                                 recognitionService.startClassificationMode(trainingName);
                                 button_recognizing.setText("Stop recognition");
@@ -201,10 +180,12 @@ public class WearMainActivity extends Activity {
                         "Make sure watch is paired with target devices", Toast.LENGTH_LONG).show();
             }
             if(resultCode == ALL_RECEIVED) {
-                Toast.makeText(getApplicationContext(), "All targets received the signal", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "All targets received the signal",
+                        Toast.LENGTH_LONG).show();
             }
             if(resultCode == NOT_ALL_RECEIVED) {
-                Toast.makeText(getApplicationContext(), "Some targets didn't receive the signal", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Some targets didn't receive the signal",
+                        Toast.LENGTH_LONG).show();
             }
         }
     }

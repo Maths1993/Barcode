@@ -26,6 +26,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -36,9 +37,8 @@ public class GestureRecorder implements SensorEventListener {
 	};
 
 	final int MIN_GESTURE_SIZE = 8;
-	float THRESHOLD = 2;
-	//DEFAULT: final int STEPCOUNT = 10;
-	final int STEPCOUNT = 10;
+	float THRESHOLD = 1.5f;
+	final int STEPCOUNT = 200;
 	SensorManager sensorManager;
 	boolean isRecording;
 
@@ -55,7 +55,7 @@ public class GestureRecorder implements SensorEventListener {
 
 	private float calcVectorNorm(float[] values) {
 		float norm = (float) Math.sqrt(values[SensorManager.DATA_X] * values[SensorManager.DATA_X] + values[SensorManager.DATA_Y] * values[SensorManager.DATA_Y] + values[SensorManager.DATA_Z]
-				* values[SensorManager.DATA_Z]) - 9.9f;
+				* values[SensorManager.DATA_Z]) - 9.6f;
 		return norm;
 	}
 
@@ -103,6 +103,10 @@ public class GestureRecorder implements SensorEventListener {
 
 		float[] value = { sensorEvent.values[SensorManager.DATA_X], sensorEvent.values[SensorManager.DATA_Y], sensorEvent.values[SensorManager.DATA_Z] };
 
+		String mean = Float.toString(calcVectorNorm(value));
+
+		Log.w("Values", mean);
+
 		switch (recordMode) {
 		case MOTION_DETECTION:
 			if (isRecording) {
@@ -119,8 +123,6 @@ public class GestureRecorder implements SensorEventListener {
 				gestureValues.add(value);
 			}
 			if (stepsSinceNoMovement == STEPCOUNT) {
-
-				System.out.println("Length is: " + String.valueOf(gestureValues.size() - STEPCOUNT));
 				if (gestureValues.size() - STEPCOUNT > MIN_GESTURE_SIZE) {
 					listener.onGestureRecorded(gestureValues.subList(0, gestureValues.size() - STEPCOUNT));
 				}
@@ -150,7 +152,7 @@ public class GestureRecorder implements SensorEventListener {
 	public void start() {
 		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 		//DEFAULT: sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
 		isRunning = true;
 	}
 
@@ -169,7 +171,7 @@ public class GestureRecorder implements SensorEventListener {
 			sensorManager.unregisterListener(this);
 		} else {
 			//DEFAULT: sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-			sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+			sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
 		}
 	}
 
