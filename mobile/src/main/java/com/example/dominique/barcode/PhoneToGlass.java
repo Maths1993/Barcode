@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-
 
 public class PhoneToGlass extends Activity {
 
@@ -21,8 +19,8 @@ public class PhoneToGlass extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
 
+        //FirebaseMessaging.getInstance().subscribeToTopic("test");
         //boolean wearAvailable = mGoogleApiClient.hasConnectedApi(Wearable.API);
         //Toast.makeText(this, "wearAvailable: " + wearAvailable,Toast.LENGTH_LONG).show();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
