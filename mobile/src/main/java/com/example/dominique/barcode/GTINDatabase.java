@@ -69,8 +69,8 @@ public class GTINDatabase {
             String itemName = doc.select("a").get(2).text();
             return itemName;
 
-        } catch (Exception hurensohn) {
-            Log.e("httpexception", hurensohn.toString());
+        } catch (Exception exception) {
+            Log.e("httpexception", exception.toString());
         }
 
 

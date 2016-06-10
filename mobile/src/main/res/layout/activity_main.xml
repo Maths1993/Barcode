@@ -6,4 +6,18 @@
 
     tools:context=".PhoneToGlass">
 
+    <Button
+        android:id="@+id/subscribeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="subscribe" />
+
+    <Button
+        android:id="@+id/logTokenButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="log" />
 </RelativeLayout>
