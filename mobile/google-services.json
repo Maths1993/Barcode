@@ -1,33 +1,31 @@
 {
   "project_info": {
-    "project_number": "280958997814",
-    "project_id": "mobile-31519"
+    "project_number": "112551090815",
+    "firebase_url": "https://barcode-6bb53.firebaseio.com",
+    "project_id": "barcode-6bb53",
+    "storage_bucket": "barcode-6bb53.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:280958997814:android:2e1ee9ae07ac433a",
+        "mobilesdk_app_id": "1:112551090815:android:2e1ee9ae07ac433a",
         "android_client_info": {
           "package_name": "com.example.dominique.barcode"
         }
       },
       "oauth_client": [
         {
-          "client_id": "280958997814-u2e3v13odshhlirskfqo3tm3e3dlvpjl.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.dominique.barcode",
-            "certificate_hash": "A985828B41AF059A7CE5DF15AC039E30F79BD32C"
-          }
+          "client_id": "112551090815-vf3q12j29n72rhbf6fsmi90r2vqq2699.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
-          "client_id": "280958997814-1u04i9g2r231caagvihaq0aafeddifa2.apps.googleusercontent.com",
+          "client_id": "112551090815-j08nhc5c99rpeusmrejrqu9458u9djr4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCq_Bv0b7K18ew62QrByn37FUplJgoyNko"
+          "current_key": "AIzaSyD2tvb9p1PJ5HFTucSmWLYYe5z9KC-5dzE"
         }
       ],
       "services": {
@@ -39,7 +37,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

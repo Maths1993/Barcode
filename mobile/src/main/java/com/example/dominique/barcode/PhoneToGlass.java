@@ -2,9 +2,9 @@ package com.example.dominique.barcode;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-
-import com.google.firebase.messaging.FirebaseMessaging;
+import android.widget.Toast;
 
 
 public class PhoneToGlass extends Activity {
@@ -21,8 +21,23 @@ public class PhoneToGlass extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        new AsyncTask<Void, Void, String>() {
 
+            @Override
+            protected String doInBackground(Void... params) {
+                return new GTINDatabase().query("9780452296122");
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Toast.makeText(PhoneToGlass.this, "item: " +s, Toast.LENGTH_LONG).show();
+
+            }
+        }.execute();
+
+
+        //FirebaseMessaging.getInstance().subscribeToTopic("test");
         //boolean wearAvailable = mGoogleApiClient.hasConnectedApi(Wearable.API);
         //Toast.makeText(this, "wearAvailable: " + wearAvailable,Toast.LENGTH_LONG).show();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
