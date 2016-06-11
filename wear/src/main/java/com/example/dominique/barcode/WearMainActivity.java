@@ -33,6 +33,7 @@ public class WearMainActivity extends Activity {
     final String trainingName = "training";
     final String gestureName = "gesture";
     boolean classificationOn = false;
+    boolean recognized = false;
 
     private Button button_learning;
     private Button button_recognizing;
@@ -59,12 +60,12 @@ public class WearMainActivity extends Activity {
 
         @Override
         public void onGestureLearned(String gestureName) throws RemoteException {
-            Toast.makeText(WearMainActivity.this, "Gesture learned", Toast.LENGTH_SHORT).show();
+            printMessage("Gesture learned");
         }
 
         @Override
         public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-            Toast.makeText(WearMainActivity.this, "Training set deleted", Toast.LENGTH_SHORT).show();
+            printMessage("Training set deleted");
         }
 
         @Override
@@ -72,11 +73,10 @@ public class WearMainActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(WearMainActivity.this, String.format("%s: %f",
-                            distribution.getBestMatch(),
-                            distribution.getBestDistance()), Toast.LENGTH_SHORT).show();
+                    printMessage(String.format("%s: %f", distribution.getBestMatch(), distribution.getBestDistance()));
                     if(isTrueGesture(distribution.getBestDistance())) {
-                        reconfigureRecognition();
+                      //  reconfigureRecognition();
+                        recognized = true;
                         sendToPhone();
                     }
                 }
@@ -106,7 +106,6 @@ public class WearMainActivity extends Activity {
                             }
                         }
                     } catch (RemoteException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
 
@@ -124,26 +123,24 @@ public class WearMainActivity extends Activity {
                             if (!classificationOn) {
                                 recognitionService.startClassificationMode(trainingName);
                                 button_recognizing.setText("Stop recognition");
-                                classificationOn = true;
                             } else {
                                 reconfigureRecognition();
                                 button_recognizing.setText("Start recognition");
                             }
+                            classificationOn = !classificationOn;
                         }
 
                     } catch (RemoteException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
             }
         });
+
     }
 
     // TODO: Set thresholds for recognizing the gesture, ...
-    public boolean isTrueGesture(Double distance) {
-        return distance < 5;
-    }
+    public boolean isTrueGesture(Double distance) { return distance < 4; }
 
     public void reconfigureRecognition() {
         try {
@@ -156,10 +153,7 @@ public class WearMainActivity extends Activity {
         unbindService(serviceConnection);
         bindService(new Intent(WearMainActivity.this, GestureRecognitionService.class),
                 serviceConnection, Context.BIND_AUTO_CREATE);
-        classificationOn = false;
-        button_recognizing.setText("Start recognition");
     }
-
 
     public void sendToPhone() {
         Intent requestIntent = new Intent(this, SendToPhone.class);
@@ -169,30 +163,22 @@ public class WearMainActivity extends Activity {
     @Override
     public void onActivityResult(int receivedCode, int resultCode, Intent data) {
         if(receivedCode == requestCode) {
-            if(resultCode == CONNECTION_FAIL) {
-                Toast.makeText(getApplicationContext(), "Connection failure", Toast.LENGTH_LONG).show();
-            }
-            if(resultCode == CONNECTION_SUSPEND) {
-                Toast.makeText(getApplicationContext(), "Connection suspended", Toast.LENGTH_LONG).show();
-            }
-            if(resultCode == NO_TARGETS) {
-                Toast.makeText(getApplicationContext(), "No target device." +
-                        "Make sure watch is paired with target devices", Toast.LENGTH_LONG).show();
-            }
-            if(resultCode == ALL_RECEIVED) {
-                Toast.makeText(getApplicationContext(), "All targets received the signal",
-                        Toast.LENGTH_LONG).show();
-            }
-            if(resultCode == NOT_ALL_RECEIVED) {
-                Toast.makeText(getApplicationContext(), "Some targets didn't receive the signal",
-                        Toast.LENGTH_LONG).show();
-            }
+            if(resultCode == CONNECTION_FAIL) printMessage("Connection failure");
+            else if(resultCode == CONNECTION_SUSPEND) printMessage("Connection suspended");
+            else if(resultCode == NO_TARGETS) printMessage("No targets. Pair watch with target");
+            else if(resultCode == ALL_RECEIVED) printMessage("All targets received the signal");
+            else if(resultCode == NOT_ALL_RECEIVED) printMessage("Some targets didn't receive the signal");
+            recognized = false;
         }
+    }
+
+    public void printMessage(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
-        if (recognitionService != null) {
+        if (recognitionService != null && !recognized) {
             try {
                 recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
             } catch (RemoteException e) {

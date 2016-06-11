@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.firebase.client.AuthData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -47,6 +48,9 @@ public class PhoneToDatabase extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.phone_to_database);
 
+        Firebase.setAndroidContext(this);
+        Firebase ref = new Firebase("https://torrid-heat-574.firebaseio.com/");
+
         if(getIntent().hasExtra("barcode")) {
             // Get barcode
             barcode = getIntent().getStringExtra("barcode");
@@ -59,6 +63,17 @@ public class PhoneToDatabase extends Activity {
             // Set up database
             Firebase.setAndroidContext(this);
             database = new Firebase("https://torrid-heat-574.firebaseio.com/");
+
+            database.authWithPassword("dominique.laurencelle@hotmail.de", "mathematicus93", new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    Log.w("SUCCESS", "User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+                }
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    Log.w("FAILURE", "FAILURE");
+                }
+            });
 
             // Set up list view and adapter to show contents
             adapter = new SimpleAdapter(this, data, R.layout.row_layout, from, to);
@@ -194,6 +209,7 @@ public class PhoneToDatabase extends Activity {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
+                Log.w("TAG", "CANCELLED");
             }
         });
     }
