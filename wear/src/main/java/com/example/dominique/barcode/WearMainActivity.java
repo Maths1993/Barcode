@@ -140,7 +140,7 @@ public class WearMainActivity extends Activity {
     }
 
     // TODO: Set thresholds for recognizing the gesture, ...
-    public boolean isTrueGesture(Double distance) { return distance < 4; }
+    public boolean isTrueGesture(Double distance) { return distance < 5; }
 
     public void reconfigureRecognition() {
         try {
