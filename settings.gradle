@@ -1,1 +1,1 @@
-include ':mobile', ':wear', ':glass', ':myapplication', ':myapplicationwear', ':mobileRecognition', ':wearrecognition', ':myapplication2'
+include ':mobile', ':wear', ':glass', ':myapplication', ':myapplicationwear', ':mobileRecognition', ':wearrecognition', ':myapplication2', ':firebaseserver'

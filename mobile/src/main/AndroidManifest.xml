@@ -35,10 +35,8 @@
             android:largeHeap="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="AIzaSyDaoPbuHva_mag-zRBaP6LFXdPY4sxWntE" />
@@ -46,41 +44,49 @@
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version" />
         </activity>
+
         <activity
             android:name=".AskToDelete"
             android:largeHeap="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version" />
         </activity>
+
         <activity
-            android:name=".PhoneToDatabase"
+            android:name=".BarcodeHandler"
             android:largeHeap="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="barcode" />
             </intent-filter>
-
             <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version" />
         </activity>
+
         <activity
             android:name=".BarcodeSettings"
             android:largeHeap="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
+        </activity>
 
+        <activity
+            android:name=".BarcodeInfoRetrieval"
+            android:largeHeap="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version" />
@@ -89,7 +95,6 @@
         <service android:name=".ReceiveFromWatch">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
-
                 <data
                     android:host="*"
                     android:path="/path"
