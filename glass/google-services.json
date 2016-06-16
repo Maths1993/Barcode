@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "112551090815",
+    "firebase_url": "https://barcode-6bb53.firebaseio.com",
+    "project_id": "barcode-6bb53",
+    "storage_bucket": "barcode-6bb53.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112551090815:android:2e1ee9ae07ac433a",
+        "android_client_info": {
+          "package_name": "com.example.dominique.barcode"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112551090815-vf3q12j29n72rhbf6fsmi90r2vqq2699.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "112551090815-j08nhc5c99rpeusmrejrqu9458u9djr4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2tvb9p1PJ5HFTucSmWLYYe5z9KC-5dzE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
