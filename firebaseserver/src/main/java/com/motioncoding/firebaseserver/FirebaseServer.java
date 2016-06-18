@@ -91,6 +91,7 @@ public class FirebaseServer {
 
                 try {
                     Response response = client.newCall(request).execute();
+                    response.close();
                 } catch (IOException e) {
                     Log.e("FCM-ERROR", e.toString());
                 }

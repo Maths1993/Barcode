@@ -23,7 +23,7 @@ import javax.net.ssl.X509TrustManager;
 public class GTINDatabase {
 
 
-    public String query(String barcode)  {
+    public static String query(String barcode)  {
 
         try {
 
@@ -66,8 +66,15 @@ public class GTINDatabase {
             InputStream in = new BufferedInputStream(conn.getInputStream());
             String html = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
             Document doc = Jsoup.parse(html);
+
+
+            String possibleError = doc.select("font[color=RED]").text();
+
             String itemName = doc.select("a").get(2).text();
-            return itemName;
+            if(!possibleError.contains("Fehler"))
+                return itemName;
+            else
+                return "Unknown: "+barcode;
 
         } catch (Exception exception) {
             Log.e("httpexception", exception.toString());
