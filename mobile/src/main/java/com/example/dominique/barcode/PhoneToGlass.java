@@ -1,7 +1,6 @@
 package com.example.dominique.barcode;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -19,10 +18,5 @@ public class PhoneToGlass extends Activity {
 
         //new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4").sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE", "status", "NOK", "value", "Stinkender Dödel"));
         BluetoothHelper.getInstance(getApplicationContext()).connect();
-
-
-        Intent requestIntent = new Intent(getApplicationContext(), BarcodeHandler.class);
-        requestIntent.putExtra("barcode", "5449");
-        startActivity(requestIntent);
     }
 }

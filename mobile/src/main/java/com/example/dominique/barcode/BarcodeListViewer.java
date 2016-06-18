@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -23,13 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BarcodeHandler extends Activity {
+public class BarcodeListViewer extends Activity {
 
     private static final int requestCode = 1;
     public static final int ADD = 1;
     public static final int OVERWRITE = 2;
     public static final int DELETE = 3;
-    public static final int RETRIEVE = 4;
     public static final String CODE = "code";
     public static final String DESCRIPTION = "description";
     public static final String PRICE = "price";
@@ -37,8 +35,6 @@ public class BarcodeHandler extends Activity {
 
     private Firebase database;
 
-    private TextView text_barcode;
-    private EditText text_barcode_edit;
     private ListView listView;
     private SimpleAdapter adapter;
 
@@ -50,34 +46,22 @@ public class BarcodeHandler extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.barcode_handler);
+        setContentView(R.layout.barcode_list_viewer);
 
-        if(getIntent().hasExtra("barcode")) {
-            // Set up database
-            Firebase.setAndroidContext(this);
-            database = new Firebase("https://torrid-heat-574.firebaseio.com/");
+        Firebase.setAndroidContext(this);
+        database = new Firebase("https://torrid-heat-574.firebaseio.com/");
 
-            initVisualElements();
-            setListeners();
-        } else finish();
-
+        setupListView();
+        setListeners();
     }
 
-    public void initVisualElements() {
-        text_barcode = (TextView) findViewById(R.id.text_barcode);
-        text_barcode.setText("Code:");
-        text_barcode_edit = (EditText) findViewById(R.id.text_code_edit);
-        String code = getIntent().getStringExtra("barcode");
-        text_barcode_edit.setText(code);
+    public void setupListView() {
         listView = (ListView) findViewById(R.id.listView);
-
-        // Set up list view and adapter to show contents
         adapter = new SimpleAdapter(this, data, R.layout.row_layout, from, to);
         listView.setAdapter(adapter);
     }
 
     public void setListeners() {
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -142,12 +126,10 @@ public class BarcodeHandler extends Activity {
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Log.w("MOVED", "moved");
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                Log.w("CANCELED", "canceled");
             }
 
             public void init(DataSnapshot dSnap) {
@@ -174,24 +156,8 @@ public class BarcodeHandler extends Activity {
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-
-                String code = text_barcode_edit.getText().toString();
-
-                if(code.equals("")) return;
-
-                // Barcode is already in database
-                if(snapshot.hasChild(code)) {
-                    Intent requestIntent = new Intent(getApplicationContext(), BarcodeSettings.class);
-
-                    for(DataSnapshot snap : snapshot.child(code).getChildren()) {
-                        requestIntent.putExtra(snap.getKey(), (String) snap.getValue());
-                    }
-
-                    startActivityForResult(requestIntent, requestCode);
-                } else {
-                    Intent intent = getIntent(BarcodeSettings.class, code, "", "", "");
-                    startActivityForResult(intent, requestCode);
-                }
+                Intent intent = getIntent(BarcodeSettings.class, "", "", "", "");
+                startActivityForResult(intent, requestCode);
             }
 
             @Override
@@ -210,12 +176,6 @@ public class BarcodeHandler extends Activity {
         return intent;
     }
 
-    public void retrieveBarcodeInfo(View view) {
-        String code = text_barcode_edit.getText().toString();
-        Intent intent = getIntent(BarcodeInfoRetrieval.class, code, "", "", "");
-        startActivityForResult(intent, requestCode);
-    }
-
     @Override
     public void onActivityResult(int receivedCode, int resultCode, Intent data) {
         if(receivedCode == requestCode) {
@@ -224,25 +184,18 @@ public class BarcodeHandler extends Activity {
                     String oldCode = data.getStringExtra("oldCode");
                     database.child(oldCode).removeValue();
                 }
-
                 String code = data.getStringExtra("code");
                 String description = data.getStringExtra("description");
                 String price = data.getStringExtra("price");
                 String location = data.getStringExtra("location");
 
-                Barcodes obj = new Barcodes(code, description, price, location);
+                BarcodeLayout obj = new BarcodeLayout(code, description, price, location);
                 Map<String, Object> map = new ObjectMapper().convertValue(obj, Map.class);
                 database.child(code).updateChildren(map);
             }
             else if(resultCode == DELETE) {
                 String code = data.getStringExtra("code");
                 database.child(code).removeValue();
-            }
-            else if(resultCode == RETRIEVE) {
-                String code = text_barcode_edit.getText().toString();
-                String info = data.getStringExtra("info");
-                Intent intent = getIntent(BarcodeSettings.class, code, info, "", "");
-                startActivityForResult(intent, requestCode);
             }
         }
     }

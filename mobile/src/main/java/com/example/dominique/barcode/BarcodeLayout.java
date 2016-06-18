@@ -1,22 +1,20 @@
 package com.example.dominique.barcode;
 
-public class Barcodes {
+public class BarcodeLayout {
 
     private String code;
-    private String description;
+    public String description;
     private String price;
     private String location;
 
-    public Barcodes(String code, String description, String price, String location) {
+    public BarcodeLayout(String code, String description, String price, String location) {
         this.code = code;
         this.description = description;
         this.price = price;
         this.location = location;
     }
 
-    public String getCode() {
-        return this.code;
-    }
+    public String getCode() { return this.code; }
 
     public String getDescription() {
         return this.description;

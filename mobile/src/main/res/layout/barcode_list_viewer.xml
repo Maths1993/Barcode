@@ -7,24 +7,8 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BarcodeHandler"
+    tools:context=".BarcodeListViewer"
     tools:deviceIds="mobile">
-
-        <TextView
-            android:id="@+id/text_barcode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:id="@+id/text_code_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/retrieve_information"
-            android:onClick="retrieveBarcodeInfo" />
 
         <Button
             android:layout_width="match_parent"

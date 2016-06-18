@@ -10,7 +10,7 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -37,7 +37,7 @@
             android:largeHeap="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data
                 android:name="com.google.android.geo.API_KEY"
@@ -60,10 +60,11 @@
         </activity>
 
         <activity
-            android:name=".BarcodeHandler"
+            android:name=".BarcodeListViewer"
             android:largeHeap="true">
             <intent-filter>
-                <action android:name="barcode" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <meta-data
                 android:name="com.google.android.gms.version"
@@ -72,18 +73,6 @@
 
         <activity
             android:name=".BarcodeSettings"
-            android:largeHeap="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
-        </activity>
-
-        <activity
-            android:name=".BarcodeInfoRetrieval"
             android:largeHeap="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
