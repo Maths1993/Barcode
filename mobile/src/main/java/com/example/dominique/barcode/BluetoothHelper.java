@@ -96,6 +96,8 @@ public class BluetoothHelper {
             string = string.substring(0, string.length()-1);
             Log.e(TAG, "onCharacteristicChanged " + string);
 
+            final String barcode = string;
+
             new AsyncTask<String, Void, String>() {
 
                 @Override
@@ -107,6 +109,7 @@ public class BluetoothHelper {
                 protected void onPostExecute(String s) {
                     Log.e(TAG, s);
                     super.onPostExecute(s);
+                    new BarcodeIntoDatabase(context).store(barcode, s, "100€", "");
                     new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4")
                             .sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE",
                                     "status", "OK", "value", s));

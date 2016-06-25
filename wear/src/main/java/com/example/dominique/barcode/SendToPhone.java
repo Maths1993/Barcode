@@ -66,6 +66,7 @@ public class SendToPhone extends Activity implements
     @Override
     public void onConnectionSuspended(int errorCode) {
         text.setText("Connection suspendened. Code: " + errorCode);
+
         Intent returnIntent = new Intent();
         returnIntent.putExtra(responseName, WearMainActivity.CONNECTION_SUSPEND);
         setResult(WearMainActivity.CONNECTION_SUSPEND, returnIntent);
@@ -74,7 +75,10 @@ public class SendToPhone extends Activity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        text.setText(connectionResult.getErrorMessage());
+        text.setText(connectionResult.getErrorCode()+"");
+
+        //Toast.makeText(getApplicationContext(), connectionResult.getErrorCode(), Toast.LENGTH_LONG).show();
+
         Intent returnIntent = new Intent();
         returnIntent.putExtra(responseName, WearMainActivity.CONNECTION_FAIL);
         setResult(WearMainActivity.CONNECTION_FAIL, returnIntent);
