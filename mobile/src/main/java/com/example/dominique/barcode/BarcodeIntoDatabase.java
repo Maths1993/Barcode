@@ -4,14 +4,12 @@ import android.content.Context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.Firebase;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.Map;
 
 public class BarcodeIntoDatabase {
 
     private Firebase database;
-    private GoogleApiClient mGoogleApiClient;
 
     public BarcodeIntoDatabase(Context context) {
         Firebase.setAndroidContext(context);

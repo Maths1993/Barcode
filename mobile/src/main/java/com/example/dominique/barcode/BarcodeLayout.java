@@ -20,9 +20,7 @@ public class BarcodeLayout {
         return this.description;
     }
 
-    public String getPrice(){
-        return this.price;
-    }
+    public String getPrice(){ return this.price; }
 
     public String getLocation() {
         return this.location;
