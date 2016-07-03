@@ -102,6 +102,13 @@ public class GestureRecorder implements SensorEventListener {
 
 		float[] value = { sensorEvent.values[SensorManager.DATA_X], sensorEvent.values[SensorManager.DATA_Y], sensorEvent.values[SensorManager.DATA_Z] };
 
+		/*float aX= sensorEvent.values[0];
+		float aY= sensorEvent.values[1];
+		//aZ= event.values[2];
+		double angle = Math.atan2(aX, aY)/(Math.PI/180);*/
+
+		//Log.w("ANGLE", Double.toString(angle));
+
 		switch (recordMode) {
 		case MOTION_DETECTION:
 			if (isRecording) {
@@ -147,6 +154,7 @@ public class GestureRecorder implements SensorEventListener {
 	public void start() {
 		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
+		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_UI);
 		isRunning = true;
 	}
 
