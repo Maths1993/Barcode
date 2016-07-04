@@ -12,10 +12,4 @@
         android:text="Start record"
         android:layout_alignParentRight="true" />
 
-    <Button
-        android:id="@+id/button_read"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start read" />
-
 </LinearLayout>

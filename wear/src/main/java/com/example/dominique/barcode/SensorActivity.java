@@ -20,16 +20,13 @@ import java.util.ArrayList;
 
 public class SensorActivity extends Activity implements SensorEventListener {
 
-    private SensorManager mSensorManager;
-    private static final String TAG = "TAG";
     public static final int CONNECTION_FAIL = 1;
     public static final int NO_TARGETS = 2;
     public static final int ALL_RECEIVED  = 3;
     public static final int NOT_ALL_RECEIVED = 4;
     public static final int CONNECTION_SUSPEND = 5;
     public static final int requestCode = 0;
-    Button button_record;
-    Button button_read;
+    private Button button_record;
     boolean recording = false;
     boolean isSaving = false;
 
@@ -40,10 +37,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test);
+        setContentView(R.layout.sensor_activity);
 
         button_record = (Button) findViewById(R.id.button_record);
-        button_read = (Button) findViewById(R.id.button_read);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorThread = new SensorEventThread("SensorThread");
@@ -53,14 +49,13 @@ public class SensorActivity extends Activity implements SensorEventListener {
             public void onClick(View v) {
                 if(!recording) {
                     sensorManager.registerListener(sensorThread,
-                            sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), 0, sensorThread.getHandler());
+                            sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
                     sensorManager.registerListener(sensorThread,
-                            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 0, sensorThread.getHandler());
-
-                    button_record.setText("Stop recording");
+                            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
+                    button_record.setText("Start recognition");
                 } else {
                     sensorManager.unregisterListener(sensorThread);
-                    button_record.setText("Start recording");
+                    button_record.setText("Stop recognition");
                 }
                 recording = !recording;
             }
@@ -126,7 +121,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
         double xMaxDiff = 15;
         double yMinDiff = -20;
         double yMaxDiff = 15;
-        double zMinDiff = 10;
+        double zMinDiff = 0;
         double zMaxDiff = 50;
 
         public SensorEventThread(String name) {
@@ -159,12 +154,18 @@ public class SensorActivity extends Activity implements SensorEventListener {
                                     Log.w("TAG", "Gesture recognized!");
                                     sendToPhone();
                                 }
-                                float xDiff = xOriValues.get(xOriValues.size() - 1) - xOriValues.get(0);
-                                float yDiff = yOriValues.get(yOriValues.size() - 1) - yOriValues.get(0);
-                                float zDiff = zOriValues.get(zOriValues.size() - 1) - zOriValues.get(0);
-                                Log.w("XData", Float.toString(xDiff));
-                                Log.w("YData", Float.toString(yDiff));
-                                Log.w("ZData", Float.toString(zDiff));
+                                /*int xSize = xOriValues.size();
+                                int ySize = yOriValues.size();
+                                int zSize = zOriValues.size();
+
+                                if(xSize != 0 && ySize != 0 && zSize != 0) {
+                                    float xDiff = xOriValues.get(xSize - 1) - xOriValues.get(0);
+                                    float yDiff = yOriValues.get(ySize - 1) - yOriValues.get(0);
+                                    float zDiff = zOriValues.get(zSize - 1) - zOriValues.get(0);
+                                    Log.w("XData", Float.toString(xDiff));
+                                    Log.w("YData", Float.toString(yDiff));
+                                    Log.w("ZData", Float.toString(zDiff));
+                                }*/
                             }
                         }
                     }
@@ -222,9 +223,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
             int zSize = zOriValues.size();
 
             if(xSize != 0 && ySize != 0 && zSize != 0) {
-                float xDiff = xOriValues.get(xOriValues.size() - 1) - xOriValues.get(0);
-                float yDiff = yOriValues.get(yOriValues.size() - 1) - yOriValues.get(0);
-                float zDiff = zOriValues.get(zOriValues.size() - 1) - zOriValues.get(0);
+                float xDiff = xOriValues.get(xSize - 1) - xOriValues.get(0);
+                float yDiff = yOriValues.get(ySize - 1) - yOriValues.get(0);
+                float zDiff = zOriValues.get(zSize - 1) - zOriValues.get(0);
 
                 if(xMinDiff < xDiff && xMaxDiff > xDiff) {
                     if(yMinDiff < yDiff && yMaxDiff > yDiff) {

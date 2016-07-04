@@ -50,7 +50,6 @@ public class BluetoothHelper {
                 gatt.connect();
             }
 
-
         }
 
         @Override

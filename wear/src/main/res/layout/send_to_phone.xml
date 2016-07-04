@@ -8,4 +8,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/connectText"
         android:text="Building new Google API client"/>
+
 </LinearLayout>
