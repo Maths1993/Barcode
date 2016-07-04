@@ -106,13 +106,14 @@ public class BluetoothHelper {
                 }
 
                 @Override
-                protected void onPostExecute(String s) {
-                    Log.e(TAG, s);
-                    super.onPostExecute(s);
-                    new BarcodeIntoDatabase(context).store(barcode, s, "100€", "");
+                protected void onPostExecute(String description) {
+                    Log.e(TAG, description);
+                    super.onPostExecute(description);
+                    String location = new GPSTracker(context).getAddress();
+                    new BarcodeIntoDatabase(context).store(barcode, description, "", location);
                     new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4")
                             .sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE",
-                                    "status", "OK", "value", s));
+                                    "status", "OK", "value", description));
                 }
             }.execute(string);
 

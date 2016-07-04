@@ -3,6 +3,7 @@ package com.example.dominique.barcode;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,9 @@ public class SendToPhone extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_to_phone);
+
+
+        Log.w("Herr", "jo");
 
         text = (TextView) findViewById(R.id.connectText);
 
@@ -68,8 +72,8 @@ public class SendToPhone extends Activity implements
         text.setText("Connection suspendened. Code: " + errorCode);
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(responseName, WearMainActivity.CONNECTION_SUSPEND);
-        setResult(WearMainActivity.CONNECTION_SUSPEND, returnIntent);
+        returnIntent.putExtra(responseName, SensorActivity.CONNECTION_SUSPEND);
+        setResult(SensorActivity.CONNECTION_SUSPEND, returnIntent);
         finish();
     }
 
@@ -80,8 +84,8 @@ public class SendToPhone extends Activity implements
         //Toast.makeText(getApplicationContext(), connectionResult.getErrorCode(), Toast.LENGTH_LONG).show();
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(responseName, WearMainActivity.CONNECTION_FAIL);
-        setResult(WearMainActivity.CONNECTION_FAIL, returnIntent);
+        returnIntent.putExtra(responseName, SensorActivity.CONNECTION_FAIL);
+        setResult(SensorActivity.CONNECTION_FAIL, returnIntent);
         finish();
     }
 
@@ -101,7 +105,7 @@ public class SendToPhone extends Activity implements
             returnIntent.putExtra(responseName, responseCode);
             NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
             if(nodes.getNodes().isEmpty()) {
-                setResult(WearMainActivity.NO_TARGETS, returnIntent);
+                setResult(SensorActivity.NO_TARGETS, returnIntent);
                 finish();
                 return;
             }
@@ -109,11 +113,11 @@ public class SendToPhone extends Activity implements
                 MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(googleClient,
                         node.getId(), path, message.getBytes()).await();
                 if(!result.getStatus().isSuccess()) {
-                    setResult(WearMainActivity.NOT_ALL_RECEIVED, returnIntent);
+                    setResult(SensorActivity.NOT_ALL_RECEIVED, returnIntent);
                     finish();
                 }
             }
-            setResult(WearMainActivity.ALL_RECEIVED, returnIntent);
+            setResult(SensorActivity.ALL_RECEIVED, returnIntent);
             finish();
         }
     }
