@@ -4,21 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".PhoneToGlass">
+    tools:context=".MobileMainActivity">
 
     <Button
-        android:id="@+id/subscribeButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/startConnection"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:text="subscribe" />
+        android:text="Start connection" />
 
     <Button
-        android:id="@+id/logTokenButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/showBarcodeList"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="log" />
+        android:text="Show barcode list" />
 
 </RelativeLayout>

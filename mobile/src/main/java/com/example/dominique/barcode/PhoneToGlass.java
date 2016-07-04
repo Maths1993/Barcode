@@ -19,15 +19,12 @@ public class PhoneToGlass extends Activity {
 
         //new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4").sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE", "status", "NOK", "value", "Stinkender Dödel"));
         try {
-        BluetoothHelper.getInstance(getApplicationContext()).connect();
-    } catch (Exception e) {
+            BluetoothHelper.getInstance(getApplicationContext()).connect();
+        } catch (Exception e) {
             new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4")
                     .sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE",
                             "status", "ERROR", "value", "Scanner not connected"));
         }
 
-      //  GPSTracker gps = new GPSTracker(PhoneToGlass.this);
-
-      //  String address = gps.getAddress();
     }
 }
