@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -16,13 +17,19 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.motioncoding.firebaseserver.FirebaseServer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BarcodeListViewer extends Activity {
+
+public class MobileMainActivity extends Activity {
+
+    private Button button_connect;
+    private Button button_show;
 
     private static final int requestCode = 1;
     public static final int ADD = 1;
@@ -45,14 +52,37 @@ public class BarcodeListViewer extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.barcode_list_viewer);
+        setContentView(R.layout.activity_main);
+
+        //new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4").sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE", "status", "NOK", "value", "Stinkender Dödel"));
+       /* try {
+            BluetoothHelper.getInstance(getApplicationContext()).connect();
+        } catch (Exception e) {
+            new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4")
+                    .sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE",
+                            "status", "ERROR", "value", "Scanner not connected"));
+        }*/
 
         Firebase.setAndroidContext(this);
         database = new Firebase("https://torrid-heat-574.firebaseio.com/");
 
         setupListView();
         setListeners();
+    }
+
+    public void startConnection(View view) {
+        FirebaseMessaging.getInstance().subscribeToTopic("central");
+
+        //new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4").sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE", "status", "NOK", "value", "Stinkender Dödel"));
+        try {
+            BluetoothHelper.getInstance(getApplicationContext()).connect();
+        } catch (Exception e) {
+            new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4")
+                    .sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE",
+                            "status", "ERROR", "value", "Scanner not connected"));
+        }
     }
 
     public void setupListView() {
@@ -199,4 +229,5 @@ public class BarcodeListViewer extends Activity {
             }
         }
     }
+
 }

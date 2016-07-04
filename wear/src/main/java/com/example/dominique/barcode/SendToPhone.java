@@ -81,7 +81,9 @@ public class SendToPhone extends Activity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         text.setText(connectionResult.getErrorCode()+"");
 
-        //Toast.makeText(getApplicationContext(), connectionResult.getErrorCode(), Toast.LENGTH_LONG).show();
+        String error = connectionResult.getErrorMessage();
+
+        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(responseName, SensorActivity.CONNECTION_FAIL);

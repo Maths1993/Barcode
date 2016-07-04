@@ -89,8 +89,13 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
     public void sendToPhone() {
         Log.w("SENT", "TOPHONE");
-        Intent requestIntent = new Intent(this, SendToPhone.class);
-        startActivityForResult(requestIntent, requestCode);
+
+        new Thread(new Runnable() {
+            public void run() {
+                Intent requestIntent = new Intent(SensorActivity.this, SendToPhone.class);
+                startActivityForResult(requestIntent, requestCode);
+            }
+        }).start();
     }
 
     @Override
@@ -119,7 +124,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
         double SECOND_THRESHOLD = 0.2;
         double xMinDiff = -15;
         double xMaxDiff = 15;
-        double yMinDiff = -15;
+        double yMinDiff = -20;
         double yMaxDiff = 15;
         double zMinDiff = 10;
         double zMaxDiff = 50;

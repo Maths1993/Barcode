@@ -44,8 +44,8 @@ public class BarcodeSettings extends Activity implements View.OnClickListener {
             returnIntent.putExtra("description", text_description_edit.getText().toString());
             returnIntent.putExtra("price", text_price_edit.getText().toString());
             returnIntent.putExtra("location", text_location_edit.getText().toString());
-            if(getIntent().hasExtra("itemClick")) setResult(BarcodeListViewer.OVERWRITE, returnIntent);
-            else setResult(BarcodeListViewer.ADD, returnIntent);
+            if(getIntent().hasExtra("itemClick")) setResult(MobileMainActivity.OVERWRITE, returnIntent);
+            else setResult(MobileMainActivity.ADD, returnIntent);
             finish();
         }
     }

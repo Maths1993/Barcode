@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    tools:context=".MobileMainActivity">
+    android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/startConnection"
+        android:id="@+id/buttonStartConnection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="startConnection"
         android:text="Start connection" />
 
     <Button
-        android:id="@+id/showBarcodeList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Show barcode list" />
+        android:text="@string/store_in_database"
+        android:onClick="storeInDatabase" />
 
-</RelativeLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_gravity="center_horizontal"
+        android:theme="@android:style/Theme.Light" />
+
+</LinearLayout>
