@@ -48,14 +48,16 @@ public class SensorActivity extends Activity implements SensorEventListener {
             @Override
             public void onClick(View v) {
                 if(!recording) {
-                    sensorManager.registerListener(sensorThread,
+                 /*   sensorManager.registerListener(sensorThread,
                             sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
                     sensorManager.registerListener(sensorThread,
-                            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
-                    button_record.setText("Start recognition");
+                            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());*/
+                    sensorManager.registerListener(sensorThread,
+                            sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
+                    button_record.setText("Stop recognition");
                 } else {
                     sensorManager.unregisterListener(sensorThread);
-                    button_record.setText("Stop recognition");
+                    button_record.setText("Start recognition");
                 }
                 recording = !recording;
             }
@@ -152,7 +154,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
                                 isSaving = false;
                                 if(checkConditions()) {
                                     Log.w("TAG", "Gesture recognized!");
-                                    sendToPhone();
+                                   // sendToPhone();
                                 }
                                 /*int xSize = xOriValues.size();
                                 int ySize = yOriValues.size();
@@ -179,9 +181,44 @@ public class SensorActivity extends Activity implements SensorEventListener {
                             float yOri = event.values[1];
                             float zOri = event.values[2];
                             saveDataToFile(xOri, yOri, zOri);
+                          /*  Log.w("XData", Float.toString(xOri));
+                            Log.w("YData", Float.toString(yOri));
+                            Log.w("ZData", Float.toString(zOri));*/
                         }
                     }
                 }).start();
+            } else if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+
+                final float[] mRotationMatrix = new float[9];
+                final float[] orientationVals = new float[3];
+
+                new Thread(new Runnable() {
+                    public void run() {
+                            // Convert the rotation-vector to a 4x4 matrix.
+                            SensorManager.getRotationMatrixFromVector(mRotationMatrix,
+                                    event.values);
+                            SensorManager
+                                    .remapCoordinateSystem(mRotationMatrix,
+                                            SensorManager.AXIS_X, SensorManager.AXIS_Z,
+                                            mRotationMatrix);
+                            SensorManager.getOrientation(mRotationMatrix, orientationVals);
+
+                            // Optionally convert the result from radians to degrees
+                            orientationVals[0] = (float) Math.toDegrees(orientationVals[0]);
+                            orientationVals[1] = (float) Math.toDegrees(orientationVals[1]);
+                            orientationVals[2] = (float) Math.toDegrees(orientationVals[2]);
+
+
+                         /*   float xOri = event.values[0];
+                            float yOri = event.values[1];
+                            float zOri = event.values[2];*/
+                           // Log.w("XData", Float.toString(orientationVals[0]));
+                            Log.w("YData", Float.toString(orientationVals[1]));
+                            //Log.w("ZData", Float.toString(orientationVals[2]));
+                            //saveDataToFile(xOri, yOri, zOri);
+                        }
+                }).start();
+
             }
         }
 

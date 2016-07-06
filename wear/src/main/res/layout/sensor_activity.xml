@@ -9,7 +9,7 @@
         android:id="@+id/button_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start record"
+        android:text="Start recognition"
         android:layout_alignParentRight="true" />
 
 </LinearLayout>
