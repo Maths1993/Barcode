@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    tools:context=".PhoneToGlass">
+    android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/subscribeButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/buttonStartConnection"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:text="subscribe" />
+        android:onClick="startConnection"
+        android:text="Start connection" />
 
     <Button
-        android:id="@+id/logTokenButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/store_in_database"
+        android:onClick="storeInDatabase" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
         android:layout_gravity="center_horizontal"
-        android:text="log" />
-</RelativeLayout>
+        android:theme="@android:style/Theme.Light" />
+
+</LinearLayout>

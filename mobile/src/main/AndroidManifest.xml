@@ -4,11 +4,12 @@
 
     <uses-sdk android:minSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -29,7 +30,7 @@
         android:allowBackup="true"
         android:label="@string/app_name">
         <activity
-            android:name=".PhoneToGlass"
+            android:name=".MobileMainActivity"
             android:allowBackup="true"
             android:label="@string/app_name"
             android:largeHeap="true">
@@ -58,30 +59,7 @@
         </activity>
 
         <activity
-            android:name=".BarcodeHandler"
-            android:largeHeap="true">
-            <intent-filter>
-                <action android:name="barcode" />
-            </intent-filter>
-            <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
-        </activity>
-
-        <activity
             android:name=".BarcodeSettings"
-            android:largeHeap="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
-        </activity>
-
-        <activity
-            android:name=".BarcodeInfoRetrieval"
             android:largeHeap="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -100,9 +78,12 @@
                     android:path="/path"
                     android:scheme="wear" />
             </intent-filter>
+            <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
         </service>
 
-        <service
+       <service
             android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

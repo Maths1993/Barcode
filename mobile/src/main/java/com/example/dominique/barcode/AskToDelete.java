@@ -22,9 +22,9 @@ public class AskToDelete extends Activity {
     public void deleteBarcode(View view) {
         Intent returnIntent = new Intent();
         String code = getIntent().getStringExtra("code");
-        returnIntent.putExtra(responseName, BarcodeHandler.DELETE);
+        returnIntent.putExtra(responseName, MobileMainActivity.DELETE);
         returnIntent.putExtra("code", code);
-        setResult(BarcodeHandler.DELETE, returnIntent);
+        setResult(MobileMainActivity.DELETE, returnIntent);
         finish();
     }
 

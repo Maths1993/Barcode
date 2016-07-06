@@ -3,21 +3,28 @@ package com.example.dominique.barcode;
 //import com.google.android.gms.wearable.MessageEvent;
 //import com.google.android.gms.wearable.WearableListenerService;
 
-public class ReceiveFromWatch
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.WearableListenerService;
+import com.motioncoding.firebaseserver.FirebaseServer;
 
-//        extends WearableListenerService
-{
-//    static String message;
-//    @Override
-//    public void onMessageReceived(MessageEvent messageEvent) {
-//        if (messageEvent.getPath().equals("/path")) {
-//             message = new String(messageEvent.getData());
-//            // TODO: How to handle gesture recognition in smart phone
-//            Log.w("TAG", message);
-//        }
-//        else {
-//            super.onMessageReceived(messageEvent);
-//        }
-//    }
+public class ReceiveFromWatch extends WearableListenerService {
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+
+        if (messageEvent.getPath().equals("/path")) {
+
+            try {
+                BluetoothHelper.getInstance(getApplicationContext()).connect();
+            } catch (Exception e) {
+                new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4")
+                        .sendDataToTopic("glass", FirebaseServer.stringToMap("cmd", "SCAN_RESPONSE",
+                                "status", "ERROR", "value", "Scanner not connected"));
+            }
+
+        } else {
+            super.onMessageReceived(messageEvent);
+        }
+    }
 
 }
