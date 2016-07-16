@@ -47,18 +47,6 @@
         </activity>
 
         <activity
-            android:name=".AskToDelete"
-            android:largeHeap="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
-        </activity>
-
-        <activity
             android:name=".BarcodeSettings"
             android:largeHeap="true">
             <intent-filter>
@@ -76,6 +64,10 @@
                 <data
                     android:host="*"
                     android:path="/path"
+                    android:scheme="wear" />
+                <data
+                    android:host="*"
+                    android:path="/stop"
                     android:scheme="wear" />
             </intent-filter>
             <meta-data

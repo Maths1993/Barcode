@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 public class SensorActivity extends Activity implements SensorEventListener {
@@ -27,11 +30,28 @@ public class SensorActivity extends Activity implements SensorEventListener {
     public static final int CONNECTION_SUSPEND = 5;
     public static final int requestCode = 0;
     private Button button_record;
+    private Button button_stopScan;
     boolean recording = false;
     boolean isSaving = false;
+    private static final float NS2S = 1.0f / 1000000000.0f;
+    private static final float EPSILON = 0.1f;
+    private final float[] deltaRotationVector = new float[4];
+    private float timestamp;
 
     private SensorManager sensorManager;
     private SensorEventThread sensorThread;
+
+    private GLSurfaceView mGLSurfaceView;
+    private SensorManager mSensorManager;
+    private float[] mGData = new float[3];
+    private float[] mMData = new float[3];
+    private float[] mR = new float[16];
+    private float[] mI = new float[16];
+    private FloatBuffer mVertexBuffer;
+    private FloatBuffer mColorBuffer;
+    private ByteBuffer mIndexBuffer;
+    private float[] mOrientation = new float[3];
+    private int mCount;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -40,26 +60,38 @@ public class SensorActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.sensor_activity);
 
         button_record = (Button) findViewById(R.id.button_record);
+        button_stopScan = (Button) findViewById(R.id.button_stopScan);
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+       // sendToPhone();
+
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorThread = new SensorEventThread("SensorThread");
 
         button_record.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!recording) {
-                 /*   sensorManager.registerListener(sensorThread,
-                            sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
-                    sensorManager.registerListener(sensorThread,
-                            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());*/
-                    sensorManager.registerListener(sensorThread,
-                            sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
+                    mSensorManager.registerListener(sensorThread,
+                            mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());
+                    mSensorManager.registerListener(sensorThread,
+                            mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST, sensorThread.getHandler());
+                   /* sensorManager.registerListener(sensorThread,
+                            sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL, sensorThread.getHandler());*/
                     button_record.setText("Stop recognition");
                 } else {
-                    sensorManager.unregisterListener(sensorThread);
+                    mSensorManager.unregisterListener(sensorThread);
                     button_record.setText("Start recognition");
                 }
                 recording = !recording;
+            }
+        });
+
+        button_stopScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent requestIntent = new Intent(SensorActivity.this, SendToPhone.class);
+                requestIntent.putExtra("data", "stop");
+                startActivityForResult(requestIntent, requestCode);
             }
         });
     }
@@ -90,6 +122,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
         new Thread(new Runnable() {
             public void run() {
                 Intent requestIntent = new Intent(SensorActivity.this, SendToPhone.class);
+                requestIntent.putExtra("data", "recognized");
                 startActivityForResult(requestIntent, requestCode);
             }
         }).start();
@@ -117,14 +150,19 @@ public class SensorActivity extends Activity implements SensorEventListener {
         ArrayList<Float> xOriValues;
         ArrayList<Float> yOriValues;
         ArrayList<Float> zOriValues;
-        double FIRST_THRESHOLD = 2;
-        double SECOND_THRESHOLD = 0.2;
+        ArrayList<Float> rollValues;
+        double FIRST_THRESHOLD = 3;
+        double SECOND_THRESHOLD = 0.0;
         double xMinDiff = -15;
         double xMaxDiff = 15;
         double yMinDiff = -20;
         double yMaxDiff = 15;
         double zMinDiff = 0;
         double zMaxDiff = 50;
+        private boolean isFinishing = false;
+        private boolean isBlocked = false;
+        private float startValue = 1000;
+        private float endValue = -1000;
 
         public SensorEventThread(String name) {
             super(name);
@@ -132,29 +170,58 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
         @Override
         public void onSensorChanged(final SensorEvent event) {
+
+            float[] data = null;
+        //    Log.w("TAG", Float.toString(1.111f));
+
             if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+
+                data = mGData;
 
                 new Thread(new Runnable() {
                     public void run() {
+
                         float xAcc = event.values[0];
                         float yAcc = event.values[1];
                         float zAcc = event.values[2];
 
+                       // Log.w("TAG", Float.toString(xAcc));
+
                         // Log.w("ACC_MEAN", Float.toString(norm(xAcc,yAcc,zAcc)));
 
+
+                        if(!isBlocked) {
                         if(!isSaving) {
                             if(norm(xAcc, yAcc, zAcc) > FIRST_THRESHOLD) {
                                 isSaving = true;
-                                xOriValues = new ArrayList<Float>();
+                                rollValues = new ArrayList<Float>();
+                               /* xOriValues = new ArrayList<Float>();
                                 yOriValues = new ArrayList<Float>();
-                                zOriValues = new ArrayList<Float>();
+                                zOriValues = new ArrayList<Float>();*/
+                                Log.w("ENTRANCE", Float.toString(norm(xAcc, yAcc, zAcc)));
                             }
                         } else {
                             if(norm(xAcc, yAcc, zAcc) < SECOND_THRESHOLD) {
-                                isSaving = false;
-                                if(checkConditions()) {
-                                    Log.w("TAG", "Gesture recognized!");
-                                   // sendToPhone();
+                                isFinishing = true;
+                                if(rollValues.size() != 0) {
+                                    float rollValue = rollValues.get(rollValues.size() - 1);
+                                    if (-60 > rollValue && rollValue > -90) {
+                                        Log.w("TAG", "Gesture recognized!");
+                                        //mSensorManager.unregisterListener(sensorThread);
+                                        try {
+                                            isBlocked = true;
+                                            Thread.sleep(5000);
+                                            isBlocked = false;
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        Log.w("TAG", "again here");
+                                    }
+                                    Log.w("OUTRANCE", Float.toString(norm(xAcc, yAcc, zAcc)));
+                                    if (checkConditions()) {
+                                        Log.w("TAG", "Gesture recognized!");
+                                        sendToPhone();
+                                    }
                                 }
                                 /*int xSize = xOriValues.size();
                                 int ySize = yOriValues.size();
@@ -168,7 +235,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
                                     Log.w("YData", Float.toString(yDiff));
                                     Log.w("ZData", Float.toString(zDiff));
                                 }*/
+
                             }
+                        }
                         }
                     }
                 }).start();
@@ -187,38 +256,28 @@ public class SensorActivity extends Activity implements SensorEventListener {
                         }
                     }
                 }).start();
-            } else if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-
-                final float[] mRotationMatrix = new float[9];
-                final float[] orientationVals = new float[3];
-
-                new Thread(new Runnable() {
-                    public void run() {
-                            // Convert the rotation-vector to a 4x4 matrix.
-                            SensorManager.getRotationMatrixFromVector(mRotationMatrix,
-                                    event.values);
-                            SensorManager
-                                    .remapCoordinateSystem(mRotationMatrix,
-                                            SensorManager.AXIS_X, SensorManager.AXIS_Z,
-                                            mRotationMatrix);
-                            SensorManager.getOrientation(mRotationMatrix, orientationVals);
-
-                            // Optionally convert the result from radians to degrees
-                            orientationVals[0] = (float) Math.toDegrees(orientationVals[0]);
-                            orientationVals[1] = (float) Math.toDegrees(orientationVals[1]);
-                            orientationVals[2] = (float) Math.toDegrees(orientationVals[2]);
-
-
-                         /*   float xOri = event.values[0];
-                            float yOri = event.values[1];
-                            float zOri = event.values[2];*/
-                           // Log.w("XData", Float.toString(orientationVals[0]));
-                            Log.w("YData", Float.toString(orientationVals[1]));
-                            //Log.w("ZData", Float.toString(orientationVals[2]));
-                            //saveDataToFile(xOri, yOri, zOri);
-                        }
-                }).start();
-
+            } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                data = mMData;
+            } else return;
+            for (int i=0 ; i<3 ; i++) data[i] = event.values[i];
+            SensorManager.getRotationMatrix(mR, mI, mGData, mMData);
+            SensorManager.getOrientation(mR, mOrientation);
+            float incl = SensorManager.getInclination(mI);
+            if (mCount++ > 80) {
+                final float rad2deg = (float)(180.0f/Math.PI);
+                mCount = 0;
+                Log.d("Compass", "yaw: " + (int)(mOrientation[0]*rad2deg) +
+                        "  pitch: " + (int)(mOrientation[1]*rad2deg) +
+                        "  roll: " + (int)(mOrientation[2]*rad2deg) +
+                        "  incl: " + (int)(incl*rad2deg)
+                );
+                if(isSaving) {
+                    rollValues.add(mOrientation[2]*rad2deg);
+                    if(isFinishing) {
+                        isSaving = false;
+                        isFinishing = false;
+                    }
+                }
             }
         }
 
@@ -255,7 +314,12 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
         public boolean checkConditions() {
 
-            int xSize = xOriValues.size();
+            if(rollValues.size() != 0) {
+                float rollDiff = (180 + rollValues.get(rollValues.size() - 1)) + rollValues.get(0);
+                Log.w("RollDiff", Float.toString(rollValues.size()-1));
+            }
+
+           /* int xSize = xOriValues.size();
             int ySize = yOriValues.size();
             int zSize = zOriValues.size();
 
@@ -271,7 +335,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
                         }
                     }
                 }
-            }
+            }*/
 
             return false;
         }

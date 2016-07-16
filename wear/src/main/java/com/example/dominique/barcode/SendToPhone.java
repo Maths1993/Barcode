@@ -3,6 +3,7 @@ package com.example.dominique.barcode;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -18,23 +19,24 @@ public class SendToPhone extends Activity implements
     private GoogleApiClient googleClient;
     private static final String responseName = "0";
     private static final int responseCode = 0;
+    private boolean recognized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_to_phone);
 
-        // Build a new GoogleApiClient for the Wearable API
-        googleClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+            // Build a new GoogleApiClient for the Wearable API
+            googleClient = new GoogleApiClient.Builder(this)
+                    .addApi(Wearable.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
 
-        if(!(googleClient != null)) {
-            Toast.makeText(getApplicationContext(), "Couldn't get GoogleAPIClient", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+            if (!(googleClient != null)) {
+                Toast.makeText(getApplicationContext(), "Couldn't get GoogleAPIClient", Toast.LENGTH_SHORT).show();
+                finish();
+            }
     }
 
     @Override
@@ -45,8 +47,14 @@ public class SendToPhone extends Activity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        String message = "Gesture recognized";
-        new SendToDataLayerThread("/path", message).start();
+        if(getIntent().getStringExtra("data").equals("recognized")) {
+            String message = "Gesture recognized";
+            new SendToDataLayerThread("/path", message).start();
+        }
+        else if(getIntent().getStringExtra("data").equals("stop")) {
+            String message = "Stop scanning";
+            new SendToDataLayerThread("/stop", message).start();
+        }
     }
 
     @Override
@@ -69,7 +77,11 @@ public class SendToPhone extends Activity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Intent returnIntent = new Intent();
         returnIntent.putExtra(responseName, SensorActivity.CONNECTION_FAIL);
+        Log.w("TAG",connectionResult.getErrorMessage()+" ");
+        Log.w("TAG",connectionResult.getErrorCode()+" ");
         setResult(SensorActivity.CONNECTION_FAIL, returnIntent);
+        if(connectionResult.hasResolution())
+            ;//startIntentSenderForResult(IntentSender, int, Intent, int, int, int);
         finish();
     }
 

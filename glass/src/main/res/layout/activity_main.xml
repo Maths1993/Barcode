@@ -7,6 +7,12 @@
     android:fitsSystemWindows="true"
     tools:context="com.example.dominique.barcode.MainActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connecting to smartphone ... "
+        android:id="@+id/textViewWait"
+        android:gravity="center" />
 
     <ProgressBar
         android:indeterminate="true"

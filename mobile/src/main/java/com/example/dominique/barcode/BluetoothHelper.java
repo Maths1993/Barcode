@@ -168,6 +168,12 @@ public class BluetoothHelper {
         Log.e(TAG, "immediate state "+state);
     }
 
+    public void sendStopCommand() {
+        mWriteCharacteristic.setValue(new byte[]{0x00});
+        boolean state = gatt.writeCharacteristic(mWriteCharacteristic);
+        Log.e(TAG, "immediate state "+state);
+    }
+
     public void connect() {
         if(isSystemReady)
             return;

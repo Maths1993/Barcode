@@ -1,6 +1,8 @@
 package com.example.dominique.barcode;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -111,13 +113,32 @@ public class MobileMainActivity extends Activity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String code = (String) ((TextView) view.findViewById(R.id.code)).getText().toString();
-                Intent intent = getIntent(AskToDelete.class, code, "", "", "");
-                startActivityForResult(intent, requestCode);
+            public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isFinishing()){
+                            new AlertDialog.Builder(MobileMainActivity.this)
+                                    .setTitle("Warning")
+                                    .setMessage("Delete barcode ?")
+                                    .setCancelable(false)
+                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String code = (String) ((TextView) view.findViewById(R.id.code)).getText().toString();
+                                            database.child(code).removeValue();
+                                        }
+                                    })
+                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
+                                    }).create().show();
+                        }
+                    }
+                });
                 return true;
             }
-
         });
 
         database.addChildEventListener(new ChildEventListener() {
