@@ -64,7 +64,8 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.2'
     compile project(':firebaseserver')
    // compile 'com.google.android.gms:play-services-wearable:8.4.0'
-    compile 'com.google.android.gms:play-services-wearable:9.0.2'
+ //   compile 'com.google.android.gms:play-services-wearable:9.0.2'
+    compile 'com.google.android.gms:play-services-wearable:8.7.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
