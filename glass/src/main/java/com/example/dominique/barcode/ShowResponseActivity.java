@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class ShowResponseActivity extends Activity {
 
-    private static final long TIMEOUT = 10 * 1000;
+    private static final long TIMEOUT = 4 * 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

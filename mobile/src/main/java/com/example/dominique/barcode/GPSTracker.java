@@ -125,9 +125,10 @@ public class GPSTracker extends Service implements LocationListener {
 			double latitude = getLatitude();
 			double longitude = getLongitude();
 
-			Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
 
 			try {
+				Geocoder geocoder = new Geocoder(this.context, Locale.ENGLISH);
+
 				List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
 				if(addresses != null) {

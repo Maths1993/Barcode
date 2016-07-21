@@ -26,17 +26,17 @@ public class SendToPhone extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_to_phone);
 
-            // Build a new GoogleApiClient for the Wearable API
-            googleClient = new GoogleApiClient.Builder(this)
-                    .addApi(Wearable.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
+        // Build a new GoogleApiClient for the Wearable API
+        googleClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
-            if (!(googleClient != null)) {
-                Toast.makeText(getApplicationContext(), "Couldn't get GoogleAPIClient", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        if (!(googleClient != null)) {
+            Toast.makeText(getApplicationContext(), "Couldn't get GoogleAPIClient", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override
@@ -47,11 +47,10 @@ public class SendToPhone extends Activity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        if(getIntent().getStringExtra("data").equals("recognized")) {
+        if (getIntent().getStringExtra("data").equals("recognized")) {
             String message = "Gesture recognized";
             new SendToDataLayerThread("/path", message).start();
-        }
-        else if(getIntent().getStringExtra("data").equals("stop")) {
+        } else if (getIntent().getStringExtra("data").equals("stop")) {
             String message = "Stop scanning";
             new SendToDataLayerThread("/stop", message).start();
         }
@@ -77,15 +76,15 @@ public class SendToPhone extends Activity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Intent returnIntent = new Intent();
         returnIntent.putExtra(responseName, SensorActivity.CONNECTION_FAIL);
-        Log.w("TAG",connectionResult.getErrorMessage()+" ");
-        Log.w("TAG",connectionResult.getErrorCode()+" ");
+        Log.w("TAG", connectionResult.getErrorMessage() + " ");
+        Log.w("TAG", connectionResult.getErrorCode() + " ");
         setResult(SensorActivity.CONNECTION_FAIL, returnIntent);
-        if(connectionResult.hasResolution())
+        if (connectionResult.hasResolution())
             ;//startIntentSenderForResult(IntentSender, int, Intent, int, int, int);
         finish();
     }
 
-    class SendToDataLayerThread extends Thread {
+    public class SendToDataLayerThread extends Thread {
 
         private String path;
         private String message;
@@ -100,7 +99,7 @@ public class SendToPhone extends Activity implements
             Intent returnIntent = new Intent();
             returnIntent.putExtra(responseName, responseCode);
             NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
-            if(nodes.getNodes().isEmpty()) {
+            if (nodes.getNodes().isEmpty()) {
                 setResult(SensorActivity.NO_TARGETS, returnIntent);
                 finish();
                 return;
@@ -108,7 +107,7 @@ public class SendToPhone extends Activity implements
             for (Node node : nodes.getNodes()) {
                 MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(googleClient,
                         node.getId(), path, message.getBytes()).await();
-                if(!result.getStatus().isSuccess()) {
+                if (!result.getStatus().isSuccess()) {
                     setResult(SensorActivity.NOT_ALL_RECEIVED, returnIntent);
                     finish();
                 }

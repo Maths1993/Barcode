@@ -1,6 +1,7 @@
 package com.example.dominique.barcode;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,10 +11,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 
@@ -21,7 +30,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
     public static final int CONNECTION_FAIL = 1;
     public static final int NO_TARGETS = 2;
-    public static final int ALL_RECEIVED  = 3;
+    public static final int ALL_RECEIVED = 3;
     public static final int NOT_ALL_RECEIVED = 4;
     public static final int CONNECTION_SUSPEND = 5;
     public static final int requestCode = 0;
@@ -39,11 +48,16 @@ public class SensorActivity extends Activity implements SensorEventListener {
     private float[] mI = new float[16];
     private float[] mOrientation = new float[3];
     private int mCount;
+    private GoogleApiClient googleClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sensor_activity);
+
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
         button_record = (Button) findViewById(R.id.button_record);
         button_stopScan = (Button) findViewById(R.id.button_stopScan);
@@ -54,7 +68,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
         button_record.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!recording) {
+                if (!recording) {
                     mSensorManager.registerListener(sensorThread,
                             mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST, sensorThread.getHandler());
                     mSensorManager.registerListener(sensorThread,
@@ -71,11 +85,16 @@ public class SensorActivity extends Activity implements SensorEventListener {
         button_stopScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent requestIntent = new Intent(SensorActivity.this, SendToPhone.class);
-                requestIntent.putExtra("data", "stop");
-                startActivityForResult(requestIntent, requestCode);
+                String message = "Stop scanning";
+                new SendToDataLayerThread("/stop", message).start();
             }
         });
+
+
+        googleClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .build();
+        googleClient.connect();
     }
 
     @Override
@@ -99,23 +118,22 @@ public class SensorActivity extends Activity implements SensorEventListener {
     public void sendToPhone() {
         Log.w("SENT", "TOPHONE");
 
-        new Thread(new Runnable() {
-            public void run() {
-                Intent requestIntent = new Intent(SensorActivity.this, SendToPhone.class);
-                requestIntent.putExtra("data", "recognized");
-                startActivityForResult(requestIntent, requestCode);
-            }
-        }).start();
+        ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(50);
+
+        String message = "Gesture recognized";
+        new SendToDataLayerThread("/path", message).start();
+
     }
 
     @Override
     public void onActivityResult(int receivedCode, int resultCode, Intent data) {
-        if(receivedCode == requestCode) {
-            if(resultCode == CONNECTION_FAIL) printMessage("Connection failure");
-            else if(resultCode == CONNECTION_SUSPEND) printMessage("Connection suspended");
-            else if(resultCode == NO_TARGETS) printMessage("No targets. Pair watch with target");
-            else if(resultCode == ALL_RECEIVED) printMessage("All targets received the signal");
-            else if(resultCode == NOT_ALL_RECEIVED) printMessage("Some targets didn't receive the signal");
+        if (receivedCode == requestCode) {
+            if (resultCode == CONNECTION_FAIL) printMessage("Connection failure");
+            else if (resultCode == CONNECTION_SUSPEND) printMessage("Connection suspended");
+            else if (resultCode == NO_TARGETS) printMessage("No targets. Pair watch with target");
+            else if (resultCode == ALL_RECEIVED) printMessage("All targets received the signal");
+            else if (resultCode == NOT_ALL_RECEIVED)
+                printMessage("Some targets didn't receive the signal");
         }
     }
 
@@ -217,7 +235,8 @@ public class SensorActivity extends Activity implements SensorEventListener {
                             }
                         }
                     }
-                }}).start();
+                }
+            }).start();
         }
 
         @Override
@@ -237,6 +256,32 @@ public class SensorActivity extends Activity implements SensorEventListener {
         public Float norm(Float x, Float y, Float z) {
             float norm = (float) Math.sqrt(x * x + y * y + z * z) - 9f;
             return norm;
+        }
+    }
+
+    class SendToDataLayerThread extends Thread {
+
+        private String path;
+        private String message;
+
+        // Constructor to send a message to the data layer
+        SendToDataLayerThread(String p, String msg) {
+            path = p;
+            message = msg;
+        }
+
+        public void run() {
+            NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
+            if (nodes.getNodes().isEmpty()) {
+                return;
+            }
+            for (Node node : nodes.getNodes()) {
+                MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(googleClient,
+                        node.getId(), path, message.getBytes()).await();
+                if (!result.getStatus().isSuccess()) {
+
+                }
+            }
         }
     }
 }

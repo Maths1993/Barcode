@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
     private void requestBarcode() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
-        if( ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI ) {
+        if( ni != null && ni.isConnected() ) {
             new FirebaseServer("AIzaSyCXmt761UPr1z3DvHDY2t9Sfrne4lEnsD4").sendDataToTopic("central", FirebaseServer.stringToMap("cmd", "SCAN"));
         }
         else {
